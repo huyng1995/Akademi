@@ -1,19 +1,90 @@
+{% load static %}
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Login</title>
+    <meta
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+      name="viewport"
+    />
+
+    <link rel ="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"/>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- Fonts and icons -->
+    <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
+    <script>
+      WebFont.load({
+        google: { families: ["Nunito"] },
+        active: function () {
+          sessionStorage.fonts = true;
+        },
+      });
+    </script>
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Login</h1>
-    <p>Welcome to my Django app.</p>
-</body>
+      body {
+          background: url("{% static 'images\computer-desk.jpg' %}") no-repeat center center fixed;
+          background-size: cover;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          font-family:"Nunito", sans-serif;;
+          font-weight: 500;
+          font-optical-sizing: auto;
+      }
+      .overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(to bottom, rgba(70, 136, 211, 0.5), rgba(36, 71, 109, 0.5));
+      }
+      .login-box {
+          position: relative;
+          z-index: 10;
+          background: white;
+          padding: 30px;
+          border-radius: 5px;
+          box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+          width: 100%;
+          max-width: 400px;
+          text-align: center;
+      }
+      .logo {
+          width: 100px;
+          margin-bottom: 20px;
+      }
+  </style>
+
+  </head>
+  <body>
+    <div class="overlay"></div>
+
+    <div class="login-box">
+        <img src="{% static 'images\logo_withtext.png' %}" alt="Company Logo" class="logo">
+        <h2 class="mb-3"><strong>Login</strong></h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="text" name="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+        </form>
+    </div>
+
+  </body>
 </html>
