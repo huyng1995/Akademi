@@ -1,6 +1,6 @@
 Hello Team
 
-To install, you need to run the following depandancies...
+To install, you need to run the following depandancies
 
 conda create -n Akademi python=3.11
 conda activate Akademi
