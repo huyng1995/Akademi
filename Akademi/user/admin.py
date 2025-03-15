@@ -1,22 +1,22 @@
 from django.contrib import admin
-from .models import Student
-from .models import Professor
-from .models import Department
-from .models import Major
-from .models import Classroom
-from .models import Semester
-from .models import Course
-from .models import Enrollment_History
-from .models import Current_Courses
+from .models import UserStudent
+from .models import UserProfessor
+from .models import UserMajor
+from .models import UserSubject
+from .models import UserClassroom
+from .models import UserSemester
+from .models import UserCourse
+from .models import UserEnrollmentHistory
+from .models import UserCurrentCourses
 
 
 # Register your models here.
-admin.site.register(Student)
-admin.site.register(Professor)
-admin.site.register(Department)
-admin.site.register(Major)
-admin.site.register(Classroom)
-admin.site.register(Semester)
-admin.site.register(Course)
-admin.site.register(Enrollment_History)
-admin.site.register(Current_Courses)
+admin.site.register(UserStudent)
+admin.site.register(UserProfessor)
+admin.site.register(UserMajor)
+admin.site.register(UserSubject)
+admin.site.register(UserClassroom)
+admin.site.register(UserSemester)
+admin.site.register(UserCourse)
+admin.site.register(UserEnrollmentHistory)
+admin.site.register(UserCurrentCourses)
