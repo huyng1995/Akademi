@@ -10,4 +10,4 @@ pip install django
 pip install fontawesomesourcetree
 pip install django-bootstrap-=v5
 
-<!-- Testing Kacy -->
+<!-- No moreeee Kacy -->
