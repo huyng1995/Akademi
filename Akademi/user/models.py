@@ -1,124 +1,277 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-# Create your models here.
+
+class AuthGroup(models.Model):
+    name = models.CharField(unique=True, max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_group'
 
 
-class Department(models.Model):
-    dept_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    dept_name = models.CharField(max_length=50)
+class AuthGroupPermissions(models.Model):
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Department: {self.dept_name} {self.dept_id} '
-    
-class Major(models.Model):
-    major_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null = True)
-    major_name = models.CharField(max_length=50)
-    
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Major: {self.major_name} {self.major_id} '
-    
-class Classroom(models.Model):
-    room_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
+    class Meta:
+        managed = False
+        db_table = 'auth_group_permissions'
+        unique_together = (('group', 'permission'),)
+
+
+class AuthPermission(models.Model):
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    codename = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_permission'
+        unique_together = (('content_type', 'codename'),)
+
+
+class AuthUser(models.Model):
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.BooleanField()
+    username = models.CharField(unique=True, max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.CharField(max_length=254)
+    is_staff = models.BooleanField()
+    is_active = models.BooleanField()
+    date_joined = models.DateTimeField()
+    first_name = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user'
+
+
+class AuthUserGroups(models.Model):
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_groups'
+        unique_together = (('user', 'group'),)
+
+
+class AuthUserUserPermissions(models.Model):
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'auth_user_user_permissions'
+        unique_together = (('user', 'permission'),)
+
+
+class DjangoAdminLog(models.Model):
+    object_id = models.TextField(blank=True, null=True)
+    object_repr = models.CharField(max_length=200)
+    action_flag = models.PositiveSmallIntegerField()
+    change_message = models.TextField()
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    action_time = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_admin_log'
+
+
+class DjangoContentType(models.Model):
+    app_label = models.CharField(max_length=100)
+    model = models.CharField(max_length=100)
+
+    class Meta:
+        managed = False
+        db_table = 'django_content_type'
+        unique_together = (('app_label', 'model'),)
+
+
+class DjangoMigrations(models.Model):
+    app = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    applied = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_migrations'
+
+
+class DjangoSession(models.Model):
+    session_key = models.CharField(primary_key=True, max_length=40)
+    session_data = models.TextField()
+    expire_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_session'
+
+
+class UserClassroom(models.Model):
+    room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=50)
     capacity = models.PositiveIntegerField()
 
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Classroom: {self.room_name} {self.room_id} '
+    def __str__(self):
+        return f'{self.room_name}, Capacity: {self.capacity}'
 
 
-class Student(models.Model): #create a class called student that will inherate from models
-    student_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    major_id = models.ForeignKey(Major, on_delete=models.SET_NULL, null = True)
+    class Meta:
+        managed = False
+        db_table = 'user_classroom'
+
+
+class UserCourse(models.Model):
+    course_id = models.AutoField(primary_key=True)
+    subject = models.ForeignKey('UserSubject', models.DO_NOTHING, blank=True, null=True)
+    professor = models.ForeignKey('UserProfessor', models.DO_NOTHING, blank=True, null=True)
+    room = models.ForeignKey(UserClassroom, models.DO_NOTHING, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
+    course_name = models.CharField(max_length=50)
+    isavailable = models.BooleanField(db_column='isAvailable')  # Field name made lowercase.
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    day = models.TextField(db_column='Day')  # Field name made lowercase.
+
+    def __str__(self):
+        return f'{self.course_name}, Taught by {self.professor.first_name} {self.professor.last_name}'
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_course'
+
+
+class UserCurrentCourses(models.Model):
+    current_course_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
+    course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
+    date_enrolled = models.DateTimeField()
+    isdropped = models.BooleanField(db_column='isDropped')  # Field name made lowercase.
+
+    def __str__(self):
+        return f'{self.student}: {self.course.course_name}'
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_current_courses'
+
+
+class UserEnrollmentHistory(models.Model):
+    enrollment_history_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
+    course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.DO_NOTHING)
+    grade = models.CharField(max_length=3, blank=True, null=True)
+    course_name = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.student}: {self.course_name}, {self.semester.term} {self.semester.academic_year}'
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_enrollment_history'
+        unique_together = (('student', 'course', 'semester'),)
+
+
+class UserMajor(models.Model):
+    major_id = models.AutoField(primary_key=True)
+    major_name = models.CharField(max_length=50)
+    def __str__(self):
+        return self.major_name
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_major'
+
+
+class UserProfessor(models.Model):
+    professor_id = models.AutoField(primary_key=True)
+    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10)
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
+    email = models.CharField(max_length=100)
+    date_created = models.DateField()
+    def __str__(self):
+        return f'Professor: {self.first_name} {self.last_name}'
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_professor'
+
+
+class UserSemester(models.Model):
+    semester_id = models.PositiveIntegerField(primary_key=True)
+    academic_year = models.CharField(max_length=10)
+    term = models.CharField(max_length=10)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return f'{self.term} {self.academic_year}'
+
+
+    class Meta:
+        managed = False
+        db_table = 'user_semester'
+
+
+class UserStudent(models.Model):
+    student_id = models.PositiveIntegerField(primary_key=True)
+    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    first_name = models.CharField(max_length=50)
+    middle_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    date_of_birth = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=10)
     enrollment_date = models.DateField()
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
-    total_units = models.FloatField()
-    create_at = models.DateField()
+    total_units = models.IntegerField()
+    date_created = models.DateField()
     grade_level = models.FloatField()
-    email = models.EmailField(max_length=100)
+    email = models.CharField(max_length=100)
     gpa = models.FloatField()
 
-
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Student: {self.first_name} {self.last_name} {self.student_id}'
-    
-
-class Professor(models.Model): #create a class called professor that will inherate from models
-    professor_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    department_id = models.ForeignKey(Department, on_delete=models.SET_NULL, null = True)
-    first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=10)
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.EmailField(max_length=100)
-    create_at = models.DateField()
-
-
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Professor: {self.first_name} {self.last_name} {self.professor_id}'
-    
-
-
-
-class Semester(models.Model):
-
-    TERM_CHOICES = [
-        ('Fall', 'Fall'),
-        ('Spring', 'Spring'),
-        ('Summer', 'Summer'),
-    ]
-
-    semester_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    student_id = models.ForeignKey(Student, on_delete=models.SET_NULL, null = True)
-    academic_year = models.CharField(max_length=10, choices = TERM_CHOICES)
-    term = models.CharField(max_length=10)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Semester: {self.term} {self.academic_year} '
-
-class Course(models.Model):
-    course_id = models.PositiveIntegerField(primary_key=True)  # Set primary_key=True
-    major_id = models.ForeignKey(Major, on_delete=models.SET_NULL, null = True)
-    professor_id = models.ForeignKey(Professor, on_delete=models.SET_NULL, null = True)
-    room_id = models.ForeignKey(Classroom, on_delete=models.SET_NULL, null = True)
-    semester_id = models.ForeignKey(Semester, on_delete=models.SET_NULL, null = True)
-    course_name = models.CharField(max_length=50)
-    isAvailable = models.BooleanField(default=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Course: {self.course_name} {self.course_id} '
-
-class Enrollment_History(models.Model):
-    student_id = models.ForeignKey(Student, on_delete=models.SET_NULL, null = True)
-    course_id = models.ForeignKey(Course, on_delete=models.SET_NULL, null = True)
-    semester = models.CharField(max_length=10)
-    grade = models.CharField(max_length = 3, blank = True, null = True)
+    def __str__(self):
+        return f'Student: {self.first_name} {self.last_name}'
 
     class Meta:
-        unique_together = ['student_id', 'course_id', 'semester']  # A student cannot enroll in the same course twice in a semester
+        managed = False
+        db_table = 'user_student'
 
-    def str(self):
-        return f"{Student.student.name} - {Course.course.name} ({self.semester})"
-    
 
-class Current_Courses(models.Model):
-    student_id = models.ForeignKey(Student, on_delete=models.SET_NULL, null = True)
-    course_id = models.ForeignKey(Course, on_delete=models.SET_NULL, null = True)
-    date_enrolled = models.DateTimeField()
-    isDropped = models.BooleanField(default=False)
-    
-    def __str__(self): #convert data stored in the model into readable info
-        return f'Current_Courses: {Course.course_name} {self.course_id} '
+class UserSubject(models.Model):
+    subject_id = models.AutoField(primary_key=True)
+    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    subject_course_number = models.BinaryField()
+    subject_name = models.CharField(max_length=50)
+    is_active = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.subject_course_number}: {self.subject_name}'
+
+    class Meta:
+        managed = False
+        db_table = 'user_subject'
