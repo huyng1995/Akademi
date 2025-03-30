@@ -1,7 +1,5 @@
-{% load static %}
-{% load bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
+{% load static %} {% load bootstrap5 %} {% bootstrap_css %}
+{%bootstrap_javascript %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,11 +10,27 @@
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
     />
-    <link rel ="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'images/favicon.ico' %}"
+    />
 
-    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link
+      href="{% static 'fontawesomefree/css/fontawesome.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/brands.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'fontawesomefree/css/solid.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
 
     <!-- Fonts and icons -->
     <script src="{% static 'assets/js/plugin/webfont/webfont.min.js' %}"></script>
@@ -30,13 +44,13 @@
     </script>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}" />
 
     <style>
       body {
-          font-family:"Nunito", sans-serif;
+        font-family: "Nunito", sans-serif;
       }
     </style>
   </head>
@@ -57,23 +71,22 @@
               />
             </a>
 
-        <div class="nav-toggle">
-          <button class="btn btn-toggle toggle-sidebar">
-            <i class="gg-menu-right"></i>
-          </button>
+            <div class="nav-toggle">
+              <button class="btn btn-toggle toggle-sidebar">
+                <i class="gg-menu-right"></i>
+              </button>
 
-          <button class="btn btn-toggle sidenav-toggler">
-            <i class="gg-menu-left"></i>
-          </button>
+              <button class="btn btn-toggle sidenav-toggler">
+                <i class="gg-menu-left"></i>
+              </button>
+            </div>
+
+            <button class="topbar-toggler more">
+              <i class="gg-more-vertical-alt"></i>
+            </button>
+          </div>
+          <!-- End Logo Header -->
         </div>
-
-        <button class="topbar-toggler more">
-          <i class="gg-more-vertical-alt"></i>
-        </button>
-
-      </div>
-      <!-- End Logo Header -->
-    </div>
 
         <!-- Sidebar Menu -->
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
@@ -88,7 +101,7 @@
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#students">
-                    <i class="fa-solid fa-user fa-lg"></i>
+                  <i class="fa-solid fa-user fa-lg"></i>
                   <p>Students</p>
                   <span class="caret"></span>
                 </a>
@@ -110,7 +123,7 @@
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#professors">
-                    <i class="fa-solid fa-user-graduate fa-lg"></i>
+                  <i class="fa-solid fa-user-graduate fa-lg"></i>
                   <p>Professors</p>
                   <span class="caret"></span>
                 </a>
@@ -139,15 +152,15 @@
                 <div class="collapse" id="courses">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="{% url 'admin_courses' %}">
+                      <a href="{% url 'admin_courses_manage' %}">
                         <span class="sub-item">Manage Courses</span>
                       </a>
                     </li>
                     <li>
-                        <a href="{% url 'admin_courses_create' %}">
-                          <span class="sub-item">Create Courses</span>
-                        </a>
-                      </li>
+                      <a href="{% url 'create_course' %}">
+                        <span class="sub-item">Create Courses</span>
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </li>
@@ -159,20 +172,19 @@
 
       <div class="main-panel">
         <div class="main-header">
-          
           <div class="main-header-logo">
             <!-- Logo Header, when zoom in-->
             <div class="logo-header" data-background-color="blue"></div>
             <!-- End Logo Header -->
           </div>
 
-          <!-- Navbar Header -->          
+          <!-- Navbar Header -->
           <nav
             class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
           >
             <div class="container-fluid">
-              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">                                                
-                <!-- user profile --> 
+              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <!-- user profile -->
                 <li class="nav-item topbar-user dropdown hidden-caret">
                   <a
                     class="dropdown-toggle profile-pic"
@@ -180,7 +192,7 @@
                     role="button"
                     id="#user_profile"
                     data-bs-toggle="dropdown"
-                    aria-expanded="false"                    
+                    aria-expanded="false"
                   >
                     <div class="avatar-sm">
                       <img
@@ -195,8 +207,11 @@
                       <span class="fw-bold">Natan</span>
                     </span>
                   </a>
-                  <!-- user profile dropdown--> 
-                  <ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="#user_profile">
+                  <!-- user profile dropdown-->
+                  <ul
+                    class="dropdown-menu dropdown-user animated fadeIn"
+                    aria-labelledby="#user_profile"
+                  >
                     <div class="dropdown-user-scroll scrollbar-outer">
                       <li>
                         <div class="user-box">
@@ -216,9 +231,21 @@
 
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#my_profile">My Profile</a>
+                        <a
+                          class="dropdown-item"
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#my_profile"
+                          >My Profile</a
+                        >
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#logout">Logout</a>
+                        <a
+                          class="dropdown-item"
+                          type="button"
+                          data-bs-toggle="modal"
+                          data-bs-target="#logout"
+                          >Logout</a
+                        >
                       </li>
                     </div>
                   </ul>
@@ -229,13 +256,23 @@
           <!-- End Navbar -->
         </div>
 
-        <div class="modal" id="my_profile" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
+        <div
+          class="modal"
+          id="my_profile"
+          tabindex="-1"
+          aria-labelledby="myModal"
+          aria-hidden="true"
+        >
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              
               <div class="modal-header">
                 <h5 class="modal-title">My Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >
                   <span aria-hidden="true"></span>
                 </button>
               </div>
@@ -245,20 +282,35 @@
               </div>
 
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
               </div>
-
             </div>
           </div>
         </div>
 
-        <div class="modal" id="logout" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
+        <div
+          class="modal"
+          id="logout"
+          tabindex="-1"
+          aria-labelledby="myModal"
+          aria-hidden="true"
+        >
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              
               <div class="modal-header">
                 <h5 class="modal-title">Log out?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >
                   <span aria-hidden="true"></span>
                 </button>
               </div>
@@ -268,31 +320,42 @@
               </div>
 
               <div class="modal-footer">
-                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Yes</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-dismiss="modal"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  No
+                </button>
               </div>
-
             </div>
           </div>
         </div>
 
         <!-- content here -->
-        {% block body %}
-        {% endblock %}   
+        {% block body %} {% endblock %}
         <!-- Content End -->
 
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-center">
             <div class="copyright">
-                Copyright &copy; <script>document.write(new Date().getFullYear())</script> by
+              Copyright &copy;
+              <script>
+                document.write(new Date().getFullYear());
+              </script>
+              by
               <a href="">Beaver Guild</a>
             </div>
           </div>
         </footer>
-
       </div>
-
-      
     </div>
 
     <!--   Core JS Files   -->
