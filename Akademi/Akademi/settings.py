@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 #import os
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -124,7 +127,7 @@ USE_TZ = True
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = 'static/'
 #MEDIA_URL = 'mediac/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 #STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_DIRS = [
     BASE_DIR / "static",
@@ -134,3 +137,14 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ALLOWED_HOSTS = ['Akademi.onrender.com', '127.0.0.1']
+
+DEBUG = False
+
+# Load environment variables from .env
+load_dotenv()
+
+# Get secret key and debug mode from environment variables
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
