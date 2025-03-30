@@ -42,10 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap5',
     'fontawesomefree',
-    'user',
-    'administrators',
-    'students',
-    'professors',
+    'Akademi.user',
+    'aAkademi.dministrators',
+    'Akademi.students',
+    'Akademi.professors',
 ]
 
 MIDDLEWARE = [
