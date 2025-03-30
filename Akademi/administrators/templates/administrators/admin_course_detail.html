@@ -1,0 +1,88 @@
+<!-- Search Input -->
+<div style="text-align: center; margin-bottom: 20px; width: 100%">
+  <input
+    type="text"
+    id="courseSearch"
+    placeholder="Search for courses..."
+    class="form-control"
+    style="width: 100%; margin-bottom: 10px"
+    onkeyup="filterCourses()"
+  />
+</div>
+
+<!-- Course List Table -->
+<table
+  class="table table-bordered table-striped"
+  style="margin-bottom: 20px; text-align: left; width: 100%"
+  id="courseTable"
+>
+  <thead class="thead-light">
+    <tr>
+      <th style="padding: 10px">Course Name</th>
+      <th style="padding: 10px; width: 250px; text-align: center">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="courseTableBody">
+    {% for course in courses %}
+    <tr class="course-row">
+      <td style="padding: 10px">
+        <a
+          href="{% url 'course_detail' course.course_id %}"
+          style="text-decoration: none; color: #333"
+          >{{ course.course_name }}</a
+        >
+      </td>
+      <td style="padding: 10px; text-align: center; white-space: nowrap">
+        <div style="display: inline-block">
+          <a
+            href="{% url 'course_detail' course_id=course.course_id %}"
+            class="btn btn-info btn-sm"
+            style="margin-right: 5px"
+            >View Details</a
+          >
+          <a
+            href="{% url 'edit_course' course_id=course.course_id %}"
+            class="btn btn-primary btn-sm"
+            style="margin-right: 5px"
+            >Edit</a
+          >
+          <a
+            href="{% url 'delete_course' course_id=course.course_id %}"
+            class="btn btn-danger btn-sm"
+            >Delete</a
+          >
+        </div>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2" style="padding: 10px; text-align: center">
+        No courses available.
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- JavaScript to filter courses -->
+<script>
+  function filterCourses() {
+    var input, filter, table, rows, td, i, txtValue;
+    input = document.getElementById("courseSearch");
+    filter = input.value.toLowerCase();
+    table = document.getElementById("courseTableBody");
+    rows = table.getElementsByClassName("course-row");
+
+    for (i = 0; i < rows.length; i++) {
+      td = rows[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>

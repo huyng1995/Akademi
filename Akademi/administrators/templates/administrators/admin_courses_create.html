@@ -1,64 +1,145 @@
-{% extends "admin_base.html" %}
+{% extends "admin_base.html" %} {% block body %}
+<div class="container">
+  <div class="page-inner">
+    <div
+      class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
+    ></div>
 
-{% block body %}
-        <!-- content here -->
-        <div class="container">
-          <div class="page-inner">
-            <div
-              class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-            >
-              <div>
-                <h3 class="fw-bold">Add Courses</h3>
-              </div>
-            </div>
-         
-            <div class="row">
-              <div class="col-md-12">
-                <div class="card card-round">
-                  <div class="card-header">
-                    <div class="card-head-row card-tools-still-right">
-                      <h4 class="card-title">Create Course Here</h4>
-                      <div class="card-tools">
-                        <button
-                          class="btn btn-icon btn-link btn-primary btn-xs"
-                        >
-                          <span class="fa fa-angle-down"></span>
-                        </button>
-                        <button
-                          class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
-                        >
-                          <span class="fa fa-sync-alt"></span>
-                        </button>
-                        <button
-                          class="btn btn-icon btn-link btn-primary btn-xs"
-                        >
-                          <span class="fa fa-times"></span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="d-flex justify-content-center">
-                        <div
-                          class="border rounded"
-                          data-coreui-locale="en-US"
-                          data-coreui-start-date="2024/02/13"
-                          data-coreui-toggle="calendar"
-                        ></div>
-                      </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">
-                
-              </div>
-
-              <div class="col-md-8">
-                
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row card-tools-still-right">
+              <h4 class="card-title">Create Course Here</h4>
+              <div class="card-tools">
+                <button
+                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
+                >
+                  <span class="fa fa-sync-alt"></span>
+                </button>
               </div>
             </div>
           </div>
+
+          <div class="card-body">
+            <form
+              id="courseForm"
+              method="POST"
+              action="{% url 'create_course' %}"
+            >
+              {% csrf_token %}
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <tbody>
+                    <tr>
+                      <td><strong>Course Name</strong></td>
+                      <td>{{ form.course_name }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Subject</strong></td>
+                      <td>{{ form.subject }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Professor</strong></td>
+                      <td>{{ form.professor }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Room</strong></td>
+                      <td>{{ form.room }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Semester</strong></td>
+                      <td>{{ form.semester }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Is Available</strong></td>
+                      <td>{{ form.isavailable }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Start Date & Time</strong></td>
+                      <td>{{ form.start_time }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>End Date & Time</strong></td>
+                      <td>{{ form.end_time }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Day</strong></td>
+                      <td>
+                        <select name="day" id="day" class="custom-dropdown">
+                          <option value="Sunday">Sunday</option>
+                          <option value="Monday">Monday</option>
+                          <option value="Tuesday">Tuesday</option>
+                          <option value="Wednesday">Wednesday</option>
+                          <option value="Thursday">Thursday</option>
+                          <option value="Friday">Friday</option>
+                          <option value="Saturday">Saturday</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="d-flex justify-content-end mt-3">
+                <button type="submit" class="custom-btn-save">
+                  <i class="fa fa-save"></i> Save Course
+                </button>
+                <button
+                  type="button"
+                  class="custom-btn-cancel"
+                  onclick="resetForm();"
+                >
+                  <i class="fa fa-times-circle"></i> Cancel / Reset
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        {% endblock %}   
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function resetForm() {
+    document.getElementById("courseForm").reset();
+  }
+</script>
+
+<style>
+  .custom-btn-save {
+    background-color: #1572e8 !important;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+  }
+  .custom-btn-save:hover {
+    background-color: #0e5bb5 !important;
+  }
+  .custom-btn-cancel {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+  }
+  .custom-btn-cancel:hover {
+    background-color: #e53935;
+  }
+  .custom-dropdown {
+    width: 10em; /* Adjust the width as needed */
+  }
+</style>
+{% endblock %}
