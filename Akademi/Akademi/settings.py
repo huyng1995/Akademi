@@ -124,14 +124,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_URL = 'static/'
-#MEDIA_URL = 'mediac/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+# Correct way to get BASE_DIR
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+STATIC_URL = '/static/'
+
+# STATIC_ROOT is where collectstatic will gather all static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # ✅ This is correct
+
+# STATICFILES_DIRS should only be used if you have additional static folders
+# If you don't need it, comment it out or remove it
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'extra_static'),  # Optional, if you have more folders
+# ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
