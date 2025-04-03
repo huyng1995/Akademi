@@ -36,6 +36,25 @@ def create_event(request):
         return JsonResponse({'status': 'success', 'id': event.id})
     return JsonResponse({'status': 'error'}, status=400)
 
+@csrf_exempt
+def create_semester(request):
+    if request.method == 'POST':
+        term = request.POST.get('term')
+        year = request.POST.get('academic_year')
+        start = request.POST.get('start_date')
+        end = request.POST.get('end_date')
+
+        UserSemester.objects.create(
+            term=term,
+            academic_year=year,
+            start_date=start,
+            end_date=end
+        )
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
 def get_calendar_events(request):
     start = request.GET.get('start')
     end = request.GET.get('end')
@@ -59,6 +78,7 @@ def admin_dashboard(request):
     active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
 
     context = {
+        'active_semester': active_semester,
         'semester_name': str(active_semester) if active_semester else 'N/A',
         'student_count': UserStudent.objects.count(),
         'professor_count': UserProfessor.objects.count(),

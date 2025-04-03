@@ -14,7 +14,7 @@
     <div class="row">
 
       <div class="col-sm-6 col-md-3">
-        <div class="card card-stats card-round">
+        <div class="card card-stats card-round" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#semesterModal">
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-icon">
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="col-sm-6 col-md-3">
+      <a href="{% url 'admin_students' %}" class="col-sm-6 col-md-3">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -51,9 +51,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="col-sm-6 col-md-3">
+      <a href="{% url 'admin_professors' %}" class="col-sm-6 col-md-3">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -64,6 +64,7 @@
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
+                  
                   <p class="card-category">Professors</p>
                   <h4 class="card-title">{{ professor_count }}</h4>
                 </div>
@@ -71,9 +72,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="col-sm-6 col-md-3">
+      <a href="{% url 'admin_courses_manage' %}" class="col-sm-6 col-md-3">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -83,15 +84,15 @@
                 </div>
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
-                <div class="numbers">
+                <div class="numbers">                
                   <p class="card-category">Course</p>
-                  <h4 class="card-title">{{ course_count }}</h4>
+                  <h4 class="card-title">{{ course_count }}</h4>                
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </a>
 
     </div>
 
@@ -107,6 +108,10 @@
                 </button>               
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
                   <i class="fa fa-plus me-1"></i> <b>Create Event</b>
+                </button>
+
+                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createSemesterModal">
+                  <i class="fa fa-plus me-1"></i> <b>Create Semester</b>
                 </button>
               </div>
             </div>            
@@ -168,6 +173,57 @@
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Save Event</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Semester Detail Modal -->
+<div class="modal fade" id="semesterModal" tabindex="-1" aria-labelledby="semesterModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="semesterModalLabel">Semester Details</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Term:</strong> {{ active_semester.term }}</p>
+        <p><strong>Academic Year:</strong> {{ active_semester.academic_year }}</p>
+        <p><strong>Start Date:</strong> {{ active_semester.start_date }}</p>
+        <p><strong>End Date:</strong> {{ active_semester.end_date }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Semester Modal -->
+<div class="modal fade" id="createSemesterModal" tabindex="-1" aria-labelledby="createSemesterModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="semesterForm" class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="createSemesterModalLabel">New Semester</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Term</label>
+          <input type="text" name="term" class="form-control" placeholder="e.g. Spring" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Academic Year</label>
+          <input type="text" name="academic_year" class="form-control" placeholder="e.g. 2025" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Start Date</label>
+          <input type="date" name="start_date" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">End Date</label>
+          <input type="date" name="end_date" class="form-control" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Create</button>
       </div>
     </form>
   </div>

@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.admin_dashboard, name='admin_dashboard'),
     path('calendar/events/', views.get_calendar_events, name='calendar_events'),
     path('calendar/events/create/', views.create_event, name='create_event'),
+    path('semester/create/', views.create_semester, name='create_semester'),
 
     path('manage_courses/list/', views.admin_courses_manage, name='admin_courses_manage'),
 
