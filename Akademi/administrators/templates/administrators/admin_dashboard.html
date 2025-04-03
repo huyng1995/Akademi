@@ -10,22 +10,42 @@
         <h6 class="op-7 mb-2">Welcome Admin!</h6>
       </div>
     </div>
+
     <div class="row">
+
       <div class="col-sm-6 col-md-3">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-icon">
-                <div
-                  class="icon-big text-center icon-primary bubble-shadow-small"
-                >
+                <div class="icon-big text-center icon-warning bubble-shadow-small">
+                  <i class="fa-solid fa-solid fa-school fa-lg"></i>
+                </div>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <p class="card-category">Semester</p>
+                  <h4 class="card-title">{{ semester_name }}</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-md-3">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-primary bubble-shadow-small">
                   <i class="fa-solid fa-users fa-lg"></i>
                 </div>
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
                   <p class="card-category">Students</p>
-                  <h4 class="card-title">540</h4>
+                  <h4 class="card-title">{{ student_count }}</h4>
                 </div>
               </div>
             </div>
@@ -45,7 +65,7 @@
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
                   <p class="card-category">Professors</p>
-                  <h4 class="card-title">30</h4>
+                  <h4 class="card-title">{{ professor_count }}</h4>
                 </div>
               </div>
             </div>
@@ -58,27 +78,23 @@
           <div class="card-body">
             <div class="row align-items-center">
               <div class="col-icon">
-                <div
-                  class="icon-big text-center icon-success bubble-shadow-small"
-                >
+                <div class="icon-big text-center icon-success bubble-shadow-small">
                   <i class="fa-solid fa-book-open-reader fa-lg"></i>
                 </div>
               </div>
               <div class="col col-stats ms-3 ms-sm-0">
                 <div class="numbers">
                   <p class="card-category">Course</p>
-                  <h4 class="card-title">100</h4>
+                  <h4 class="card-title">{{ course_count }}</h4>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
-    <div class="row">
-      <div class="col-md-8"></div>
-      <div class="col-md-4"></div>
-    </div>
+
     <div class="row">
       <div class="col-md-12">
         <div class="card card-round">
@@ -86,38 +102,74 @@
             <div class="card-head-row card-tools-still-right">
               <h4 class="card-title">Calendar</h4>
               <div class="card-tools">
-                <button class="btn btn-icon btn-link btn-primary btn-xs">
-                  <span class="fa fa-angle-down"></span>
-                </button>
-                <button
-                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
-                >
+                <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
                   <span class="fa fa-sync-alt"></span>
-                </button>
-                <button class="btn btn-icon btn-link btn-primary btn-xs">
-                  <span class="fa fa-times"></span>
+                </button>               
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                  <i class="fa fa-plus me-1"></i> <b>Create Event</b>
                 </button>
               </div>
-            </div>
+            </div>            
           </div>
+          <!-- Bootsrap Calendar -->
           <div class="card-body">
-            <div class="d-flex justify-content-center">
-              <div
-                class="border rounded"
-                data-coreui-locale="en-US"
-                data-coreui-start-date="2024/02/13"
-                data-coreui-toggle="calendar"
-              ></div>
-            </div>
+            <div class="p-3 border rounded" id="bootstrap-calendar"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-4"></div>
 
-      <div class="col-md-8"></div>
+  </div>
+</div>
+
+<!-- Event Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="eventModalLabel">Event Details</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Title:</strong> <span id="modalEventTitle"></span></p>
+        <p><strong>Start:</strong> <span id="modalEventStart"></span></p>
+        <p><strong>End:</strong> <span id="modalEventEnd"></span></p>
+        <p><strong>Description:</strong> <span id="modalEventDesc"></span></p>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- Create Event Modal -->
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="eventForm" class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="createEventModalLabel">Create New Event</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input type="text" name="title" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Start</label>
+          <input type="datetime-local" name="start" class="form-control" required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">End</label>
+          <input type="datetime-local" name="end" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Save Event</button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock %}

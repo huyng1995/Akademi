@@ -48,11 +48,47 @@
     <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}" />
     <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}" />
 
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
     <style>
       body {
         font-family: "Nunito", sans-serif;
       }
     </style>
+
+    <style>
+      #bootstrap-calendar {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .fc {
+        font-size: 1.5rem !important;  /* Double the base size */
+      }
+
+      .fc-event, .fc-event-dot {
+        color: black !important;
+      }
+      .fc-event-time {
+        display: none !important;
+      }      
+    </style>
+
+    <style>
+      .card-stats {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-stats:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -373,5 +409,67 @@
 
     <!-- Kaiadmin JS -->
     <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('bootstrap-calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          themeSystem: 'bootstrap5',
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            start: 'title',
+            center: '',
+            end: 'today prev,next'
+          },
+          eventClick: function (info) {
+            // Prevent default behavior
+            info.jsEvent.preventDefault();
+
+            // Fill modal with event data
+            document.getElementById('modalEventTitle').textContent = info.event.title;
+            document.getElementById('modalEventStart').textContent = info.event.start?.toLocaleString();
+            document.getElementById('modalEventEnd').textContent = info.event.end?.toLocaleString() || 'N/A';
+            document.getElementById('modalEventDesc').textContent = info.event.extendedProps.description || '—';
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+          },
+          events: '/administrators/calendar/events/' // Your endpoint
+        });
+
+        calendar.render();
+
+        // Handle form submission
+        document.getElementById('eventForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const formData = new FormData(this);
+
+          fetch('/administrators/calendar/events/create/', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              calendar.refetchEvents();
+              const modal = bootstrap.Modal.getInstance(document.getElementById('createEventModal'));
+              modal.hide();
+              this.reset();
+            } else {
+              alert('Error creating event.');
+            }
+          });
+        });
+      });
+    </script>
+
+
+
   </body>
 </html>
