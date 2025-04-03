@@ -227,6 +227,7 @@ class UserSemester(models.Model):
     term = models.CharField(max_length=10)
     start_date = models.DateField()
     end_date = models.DateField()
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.term} {self.academic_year}'
