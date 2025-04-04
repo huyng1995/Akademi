@@ -24,4 +24,7 @@ urlpatterns = [
     # Admin professor and student create paths
     path('professors_create/', views.admin_professors_create, name='admin_professors_create'),
     path('students_create/', views.admin_students_create, name='admin_students_create'),
+
+    path('logout/', views.administrators_logout, name='logout'),
+    path('update-avatar/', views.update_avatar, name='update_avatar'),
 ]
