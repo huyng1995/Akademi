@@ -2,13 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from administrators.forms import CourseForm, ProfessorForm
 from django.utils.timezone import now
 
-import calendar
-from datetime import datetime
-from django.shortcuts import render
-
 from django.http import JsonResponse
 from .models import CalendarEvent
-import datetime
+
 from django.utils.dateparse import parse_datetime
 
 from django.views.decorators.csrf import csrf_exempt
@@ -17,6 +13,11 @@ from user.models import UserProfessor
 from user.models import UserCourse
 from user.models import UserSemester
 from datetime import date
+
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
+from user.models import AdminProfile
+from user.decorators import admin_required
 
 @csrf_exempt
 def create_event(request):
@@ -73,11 +74,14 @@ def get_calendar_events(request):
     ]
     return JsonResponse(data, safe=False)
 
+@admin_required
 def admin_dashboard(request):
     today = date.today()
     active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
 
     context = {
+        'user': request.user,
+        'profile': request.user.adminprofile,
         'active_semester': active_semester,
         'semester_name': str(active_semester) if active_semester else 'N/A',
         'student_count': UserStudent.objects.count(),
@@ -85,7 +89,28 @@ def admin_dashboard(request):
         'course_count': UserCourse.objects.count(),
     }
 
-    return render(request, 'administrators/admin_dashboard.html',context)
+    return render(request, 'administrators/admin_dashboard.html',context,)
+
+@login_required(login_url='login')
+def update_avatar(request):
+    if request.method == 'POST' and request.FILES.get('avatar'):
+        avatar = request.FILES['avatar']
+        user = request.user
+
+        # ✅ If avatar is on the user model
+        if hasattr(user, 'avatar'):
+            user.avatar = avatar
+            user.save()
+            return JsonResponse({'status': 'success', 'avatar_url': user.avatar.url})
+
+        # ✅ If avatar is on the adminprofile
+        elif hasattr(user, 'adminprofile'):
+            profile = user.adminprofile
+            profile.avatar = avatar
+            profile.save()
+            return JsonResponse({'status': 'success', 'avatar_url': profile.avatar.url})
+
+    return JsonResponse({'status': 'error'}, status=400)
 
 def admin_courses_manage(request):
     courses = UserCourse.objects.all()
@@ -157,6 +182,7 @@ def delete_course(request, course_id):
         return redirect('admin_courses_manage')
     return render(request, 'administrators/admin_confirm_delete.html', {'course': course})
 
+<<<<<<< HEAD
 # View professor details
 def professor_detail(request, professor_id):
     professor = get_object_or_404(UserProfessor, professor_id=professor_id)
@@ -194,6 +220,12 @@ def delete_professor(request, professor_id):
         professor.delete()
         return redirect('admin_professors_manage')
     return render(request, 'administrators/admin_professor_delete.html', {'professor': professor})
+=======
+def administrators_logout(request):
+    logout(request)  # Clears Django auth user session
+    request.session.flush()  # Clears student/professor session
+    return redirect('index')
+>>>>>>> 59c2e68bb7728c029169cf0b2461deee46225737
 
 
 

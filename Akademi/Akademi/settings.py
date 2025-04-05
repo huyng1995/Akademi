@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3r0s#n8=l9m+^5$l2$(&bq7w72o4%wabn9!#rn$z!(4=l-@$6@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'bootstrap5',
     'fontawesomefree',
     'user',
-    'administrators',
     'students',
     'professors',
+    'administrators.apps.AdministratorsConfig',
 ]
 
 MIDDLEWARE = [
@@ -118,19 +118,17 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_URL = 'static/'
-#MEDIA_URL = 'mediac/'
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CSRF_FAILURE_VIEW = 'user.views.access_denied'

@@ -215,9 +215,7 @@
           </div>
 
           <!-- Navbar Header -->
-          <nav
-            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
-          >
+          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
             <div class="container-fluid">
               <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                 <!-- user profile -->
@@ -232,15 +230,17 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="{% static 'images\profile2.jpg' %}"
-                        alt="..."
+                        id="adminAvatar2"
+                        src="{% if user.adminprofile.avatar %}{{ user.adminprofile.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                        alt="Avatar"
                         class="avatar-img rounded-circle"
+                        onerror="fallbackAvatar(this)"
                       />
                     </div>
 
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Natan</span>
+                      <span class="fw-bold">{{ user.first_name }}</span>
                     </span>
                   </a>
                   <!-- user profile dropdown-->
@@ -253,14 +253,16 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="{% static 'images\profile2.jpg' %}"
-                              alt="image profile"
+                              id="adminAvatar2"
+                              src="{% if user.adminprofile.avatar %}{{ user.adminprofile.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                              alt="Avatar"
                               class="avatar-img rounded"
+                              onerror="fallbackAvatar(this)"
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Natan</h4>
-                            <p class="text-muted">user_email@gmail.com</p>
+                            <h4>{{ user.first_name }}</h4>
+                            <p class="text-muted">{{ user.email }}</p>
                           </div>
                         </div>
                       </li>
@@ -280,8 +282,7 @@
                           type="button"
                           data-bs-toggle="modal"
                           data-bs-target="#logout"
-                          >Logout</a
-                        >
+                          >Logout</a>
                       </li>
                     </div>
                   </ul>
@@ -292,6 +293,7 @@
           <!-- End Navbar -->
         </div>
 
+        <!-- User Profile Modal -->
         <div
           class="modal"
           id="my_profile"
@@ -301,6 +303,7 @@
         >
           <div class="modal-dialog" role="document">
             <div class="modal-content">
+
               <div class="modal-header">
                 <h5 class="modal-title">My Profile</h5>
                 <button
@@ -313,8 +316,36 @@
                 </button>
               </div>
 
-              <div class="modal-body">
-                <p>user profile here</p>
+              <div class="modal-body text-center">
+
+                <img
+                id="adminAvatar"
+                src="{% if user.adminprofile.avatar %}{{ user.adminprofile.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                alt="Avatar"
+                class="rounded-circle mb-3"
+                style="width: 100px; height: 100px; object-fit: cover;"
+                onerror="fallbackAvatar(this)"
+                />
+      
+                <!-- Upload button -->
+                <div class="mb-3">
+                  <label class="btn btn-primary text-white">
+                    Change Avatar
+                    <input type="file" id="avatarInput" hidden accept="image/*">
+                  </label>
+                </div>
+
+                <p><strong>Full Name:</strong> 
+                {{ user.first_name }} {{ user.last_name }}
+                </p>
+              
+                <p><strong>Email:</strong> 
+                {{ user.email }}
+                </p>
+              
+                <p><strong>Username:</strong> 
+                {{ user.username }}
+                </p>
               </div>
 
               <div class="modal-footer">
@@ -330,6 +361,7 @@
           </div>
         </div>
 
+        <!-- Logout Modal -->
         <div
           class="modal"
           id="logout"
@@ -356,13 +388,7 @@
               </div>
 
               <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-warning"
-                  data-bs-dismiss="modal"
-                >
-                  Yes
-                </button>
+                <a href="{% url 'logout' %}" class="btn btn-warning">Yes</a>
                 <button
                   type="button"
                   class="btn btn-secondary"
@@ -376,7 +402,8 @@
         </div>
 
         <!-- content here -->
-        {% block body %} {% endblock %}
+        {% block body %} 
+        {% endblock %}
         <!-- Content End -->
 
         <footer class="footer">
@@ -495,6 +522,48 @@
           }
         });
       });
+    </script>
+
+    <script>
+      document.getElementById('avatarInput').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        fetch("{% url 'update_avatar' %}", {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+
+            const newUrl = data.avatar_url + '?t=' + new Date().getTime();
+            document.getElementById('adminAvatar').src = newUrl;
+            const navbarAvatars = document.querySelectorAll('.avatar-img');
+            navbarAvatars.forEach(img => {
+              img.src = newUrl;
+            });
+
+          } else {
+            alert('Failed to update avatar.');
+          }
+        })
+        .catch(error => {
+          console.error('Upload error:', error);
+        });
+      });
+
+      function fallbackAvatar(img) {
+        img.onerror = null;
+        img.src = "{% static 'images/profile2.jpg' %}";
+      }
+
     </script>
 
   </body>

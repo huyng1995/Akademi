@@ -6,7 +6,23 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+class AdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='adminprofile')
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg', blank=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+    
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        AdminProfile.objects.create(user=instance)
+    else:
+        instance.adminprofile.save()
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -212,12 +228,13 @@ class UserProfessor(models.Model):
     password = models.CharField(max_length=50)
     email = models.CharField(max_length=100)
     date_created = models.DateField()
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
+    
     def __str__(self):
         return f'Professor: {self.first_name} {self.last_name}'
 
-
     class Meta:
-        managed = False
+        # managed = True
         db_table = 'user_professor'
 
 
@@ -239,6 +256,7 @@ class UserSemester(models.Model):
 
 
 class UserStudent(models.Model):
+   
     student_id = models.PositiveIntegerField(primary_key=True)
     major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
@@ -251,15 +269,28 @@ class UserStudent(models.Model):
     password = models.CharField(max_length=50)
     total_units = models.IntegerField()
     date_created = models.DateField()
-    grade_level = models.FloatField()
     email = models.CharField(max_length=100)
     gpa = models.FloatField()
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
+    
+    GRADE_LEVEL_CHOICES = [
+        ('Freshman', 'Freshman'),
+        ('Sophomore', 'Sophomore'),
+        ('Junior', 'Junior'),
+        ('Senior', 'Senior'),
+    ]
+
+    grade_level = models.CharField(
+        max_length=10,
+        choices=GRADE_LEVEL_CHOICES,
+        default='Freshman'
+    )
 
     def __str__(self):
         return f'Student: {self.first_name} {self.last_name}'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_student'
 
 

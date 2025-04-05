@@ -74,7 +74,16 @@
         <img src="{% static 'images\logo_withtext.png' %}" alt="Company Logo" class="logo">
         <h2 class="mb-3"><strong>Login</strong></h2>
 
-        <form method="POST">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="">
             {% csrf_token %}
             <div class="mb-3">
                 <input type="text" name="username" class="form-control" placeholder="Username" required>

@@ -80,7 +80,7 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
               <li class="nav-item">
-                <a href="{% url 'admin_dashboard' %}">
+                <a href="{% url 'professors_dashboard' %}">
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
@@ -139,12 +139,12 @@
                 <div class="collapse" id="courses">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="{% url 'admin_courses' %}">
+                      <a href="">
                         <span class="sub-item">Manage Courses</span>
                       </a>
                     </li>
                     <li>
-                        <a href="{% url 'admin_courses_create' %}">
+                        <a href="">
                           <span class="sub-item">Create Courses</span>
                         </a>
                       </li>
@@ -184,15 +184,17 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="{% static 'images\profile2.jpg' %}"
-                        alt="..."
+                        id="professorAvatar1"
+                        src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                        alt="Avatar"
                         class="avatar-img rounded-circle"
+                        onerror="fallbackAvatar(this)"
                       />
                     </div>
 
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Natan</span>
+                      <span class="fw-bold">{{ professor.first_name }}</span>
                     </span>
                   </a>
                   <!-- user profile dropdown--> 
@@ -202,14 +204,16 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="{% static 'images\profile2.jpg' %}"
-                              alt="image profile"
+                              id="professorAvatar2"
+                              src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                              alt="Avatar"
                               class="avatar-img rounded"
+                              onerror="fallbackAvatar(this)"
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Natan</h4>
-                            <p class="text-muted">user_email@gmail.com</p>
+                            <h4>{{ professor.first_name }}</h4>
+                            <p class="text-muted">{{ professor.email }}</p>
                           </div>
                         </div>
                       </li>
@@ -229,6 +233,7 @@
           <!-- End Navbar -->
         </div>
 
+        <!-- User Profile Modal -->
         <div class="modal" id="my_profile" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -240,8 +245,36 @@
                 </button>
               </div>
 
-              <div class="modal-body">
-                <p>user profile here</p>
+              <div class="modal-body text-center">
+
+                <img
+                id="professorAvatar"
+                src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
+                alt="Avatar"
+                class="rounded-circle mb-3"
+                style="width: 100px; height: 100px; object-fit: cover;"
+                onerror="fallbackAvatar(this)"
+                />
+      
+                <!-- Upload button -->
+                <div class="mb-3">
+                  <label class="btn btn-primary text-white">
+                    Change Avatar
+                    <input type="file" id="avatarInput" hidden accept="image/*">
+                  </label>
+                </div>
+
+                <p><strong>Full Name:</strong> 
+                {{ professor.first_name }} {{ professor.middle_name }} {{ professor.last_name }}
+                </p>
+              
+                <p><strong>Email:</strong> 
+                {{ professor.email }}
+                </p>
+              
+                <p><strong>Username:</strong> 
+                {{ professor.username }}
+                </p>
               </div>
 
               <div class="modal-footer">
@@ -252,6 +285,7 @@
           </div>
         </div>
 
+        <!-- Logout Modal -->
         <div class="modal" id="logout" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -268,7 +302,7 @@
               </div>
 
               <div class="modal-footer">
-                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Yes</button>
+                <a href="{% url 'professors_logout' %}" class="btn btn-warning">Yes</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
               </div>
 
@@ -310,5 +344,45 @@
 
     <!-- Kaiadmin JS -->
     <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+    <script>
+      document.getElementById('avatarInput').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+    
+        const formData = new FormData();
+        formData.append('avatar', file);
+    
+        fetch("{% url 'professors_update_avatar' %}", {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const newUrl = data.avatar_url + '?t=' + new Date().getTime();
+            document.getElementById('professorAvatar').src = newUrl;
+            const navbarAvatars = document.querySelectorAll('.avatar-img');
+            navbarAvatars.forEach(img => {
+              img.src = newUrl;
+            });
+          } else {
+            alert('Failed to update avatar.');
+          }
+        })
+        .catch(error => {
+          console.error('Upload error:', error);
+        });
+      });
+
+      function fallbackAvatar(img) {
+        img.onerror = null;
+        img.src = "{% static 'images/profile2.jpg' %}";
+      }
+
+    </script>
   </body>
 </html>
