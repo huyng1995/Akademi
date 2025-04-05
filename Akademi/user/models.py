@@ -6,23 +6,18 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
-class AdminProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='adminprofile')
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.jpg', blank=True)
 
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
-    
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        AdminProfile.objects.create(user=instance)
-    else:
-        instance.adminprofile.save()
+class AdministratorsCalendarevent(models.Model):
+    title = models.CharField(max_length=200)
+    start = models.DateTimeField()
+    end = models.DateTimeField(blank=True, null=True)
+    description = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'administrators_calendarevent'
+
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
@@ -134,14 +129,22 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
+class AdminProfile(models.Model):
+    avatar = models.CharField(max_length=100)
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'user_adminprofile'
+
+
 class UserClassroom(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=50)
     capacity = models.PositiveIntegerField()
 
     def __str__(self):
-        return f'{self.room_name}, Capacity: {self.capacity}'
-
+        return f'Classroom: {self.room_name} {self.room_id}'
 
     class Meta:
         managed = False
@@ -154,15 +157,15 @@ class UserCourse(models.Model):
     professor = models.ForeignKey('UserProfessor', models.DO_NOTHING, blank=True, null=True)
     room = models.ForeignKey(UserClassroom, models.DO_NOTHING, blank=True, null=True)
     semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
-    course_name = models.CharField(max_length=50)
+    subject_name = models.CharField(max_length=50)
     isavailable = models.BooleanField(db_column='isAvailable')  # Field name made lowercase.
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    day = models.TextField(db_column='Day')  # Field name made lowercase.
+    start_time = models.TextField()
+    end_time = models.TextField()
+    start_date = models.DateField()
+    end_date = models.DateField()
 
-    def __str__(self):
-        return f'{self.course_name}, Taught by {self.professor.first_name} {self.professor.last_name}'
-
+    def __str__(self): #convert data stored in the model into readable info
+        return f'{self.subject_name} {self.course_id}'
 
     class Meta:
         managed = False
@@ -178,7 +181,7 @@ class UserCurrentCourses(models.Model):
     isdropped = models.BooleanField(db_column='isDropped')  # Field name made lowercase.
 
     def __str__(self):
-        return f'{self.student}: {self.course.course_name}'
+        return f'{self.student}: {self.course.subject_name}'
 
 
     class Meta:
@@ -207,6 +210,7 @@ class UserEnrollmentHistory(models.Model):
 class UserMajor(models.Model):
     major_id = models.AutoField(primary_key=True)
     major_name = models.CharField(max_length=50)
+
     def __str__(self):
         return self.major_name
 
@@ -218,7 +222,6 @@ class UserMajor(models.Model):
 
 class UserProfessor(models.Model):
     professor_id = models.AutoField(primary_key=True)
-    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -228,13 +231,14 @@ class UserProfessor(models.Model):
     password = models.CharField(max_length=50)
     email = models.CharField(max_length=100)
     date_created = models.DateField()
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
-    
-    def __str__(self):
-        return f'Professor: {self.first_name} {self.last_name}'
+    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    avatar = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self): #convert data stored in the model into readable info
+        return f'Professor: {self.first_name} {self.last_name} {self.professor_id}'
 
     class Meta:
-        # managed = True
+        managed = False
         db_table = 'user_professor'
 
 
@@ -244,11 +248,10 @@ class UserSemester(models.Model):
     term = models.CharField(max_length=10)
     start_date = models.DateField()
     end_date = models.DateField()
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(blank=True, null=True)
 
-    def __str__(self):
-        return f'{self.term} {self.academic_year}'
-
+    def __str__(self): #convert data stored in the model into readable info
+        return f'Semester: {self.term} {self.academic_year} '
 
     class Meta:
         managed = False
@@ -256,9 +259,7 @@ class UserSemester(models.Model):
 
 
 class UserStudent(models.Model):
-   
     student_id = models.PositiveIntegerField(primary_key=True)
-    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -271,26 +272,15 @@ class UserStudent(models.Model):
     date_created = models.DateField()
     email = models.CharField(max_length=100)
     gpa = models.FloatField()
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
-    
-    GRADE_LEVEL_CHOICES = [
-        ('Freshman', 'Freshman'),
-        ('Sophomore', 'Sophomore'),
-        ('Junior', 'Junior'),
-        ('Senior', 'Senior'),
-    ]
+    avatar = models.CharField(max_length=100, blank=True, null=True)
+    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    grade_level = models.CharField(max_length=10)
 
-    grade_level = models.CharField(
-        max_length=10,
-        choices=GRADE_LEVEL_CHOICES,
-        default='Freshman'
-    )
-
-    def __str__(self):
-        return f'Student: {self.first_name} {self.last_name}'
+    def __str__(self): #convert data stored in the model into readable info
+        return f'Student: {self.first_name} {self.last_name} {self.student_id}'
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'user_student'
 
 

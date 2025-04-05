@@ -17,4 +17,4 @@ class CourseForm(forms.ModelForm):
 
     class Meta:
         model = UserCourse
-        fields = ['course_name', 'subject', 'professor', 'room', 'semester', 'isavailable', 'start_time', 'end_time', 'day']
+        fields = ['subject_name', 'subject', 'professor', 'room', 'semester', 'isavailable', 'start_time', 'end_time', 'day']
