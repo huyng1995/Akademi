@@ -228,7 +228,7 @@ class UserProfessor(models.Model):
     password = models.CharField(max_length=50)
     email = models.CharField(max_length=100)
     date_created = models.DateField()
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
     
     def __str__(self):
         return f'Professor: {self.first_name} {self.last_name}'
@@ -271,7 +271,7 @@ class UserStudent(models.Model):
     date_created = models.DateField()
     email = models.CharField(max_length=100)
     gpa = models.FloatField()
-    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
     
     GRADE_LEVEL_CHOICES = [
         ('Freshman', 'Freshman'),

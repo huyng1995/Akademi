@@ -80,7 +80,7 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
               <li class="nav-item">
-                <a href="{% url 'admin_dashboard' %}">
+                <a href="{% url 'students_dashboard' %}">
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
@@ -185,9 +185,10 @@
                     <div class="avatar-sm">
                       <img
                         id="studentAvatar1"
-                        src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile.jpeg' %}{% endif %}"
+                        src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
                         alt="Avatar"
                         class="avatar-img rounded-circle"
+                        onerror="fallbackAvatar(this)"
                       />
                     </div>
 
@@ -204,9 +205,10 @@
                           <div class="avatar-lg">
                             <img
                               id="studentAvatar2"
-                              src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile.jpeg' %}{% endif %}"
+                              src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
                               alt="Avatar"
                               class="avatar-img rounded"
+                              onerror="fallbackAvatar(this)"
                             />
                           </div>
                           <div class="u-text">
@@ -247,10 +249,11 @@
 
                 <img
                 id="studentAvatar"
-                src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile.jpeg' %}{% endif %}"
+                src="{% if student.avatar %}{{ student.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
                 alt="Avatar"
                 class="rounded-circle mb-3"
                 style="width: 100px; height: 100px; object-fit: cover;"
+                onerror="fallbackAvatar(this)"
                 />
       
                 <!-- Upload button -->
@@ -374,6 +377,11 @@
           console.error('Upload error:', error);
         });
       });
+
+      function fallbackAvatar(img) {
+        img.onerror = null;
+        img.src = "{% static 'images/profile2.jpg' %}";
+      }
 
     </script>
   </body>

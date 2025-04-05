@@ -234,6 +234,7 @@
                         src="{% if user.adminprofile.avatar %}{{ user.adminprofile.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
                         alt="Avatar"
                         class="avatar-img rounded-circle"
+                        onerror="fallbackAvatar(this)"
                       />
                     </div>
 
@@ -256,6 +257,7 @@
                               src="{% if user.adminprofile.avatar %}{{ user.adminprofile.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
                               alt="Avatar"
                               class="avatar-img rounded"
+                              onerror="fallbackAvatar(this)"
                             />
                           </div>
                           <div class="u-text">
@@ -322,6 +324,7 @@
                 alt="Avatar"
                 class="rounded-circle mb-3"
                 style="width: 100px; height: 100px; object-fit: cover;"
+                onerror="fallbackAvatar(this)"
                 />
       
                 <!-- Upload button -->
@@ -540,7 +543,6 @@
         .then(data => {
           if (data.status === 'success') {
 
-            // document.getElementById('adminAvatar').src = data.avatar_url;
             const newUrl = data.avatar_url + '?t=' + new Date().getTime();
             document.getElementById('adminAvatar').src = newUrl;
             const navbarAvatars = document.querySelectorAll('.avatar-img');
@@ -556,6 +558,11 @@
           console.error('Upload error:', error);
         });
       });
+
+      function fallbackAvatar(img) {
+        img.onerror = null;
+        img.src = "{% static 'images/profile2.jpg' %}";
+      }
 
     </script>
 
