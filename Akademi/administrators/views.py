@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from administrators.forms import CourseForm
+from administrators.forms import CourseForm, ProfessorForm
 from django.utils.timezone import now
 
 import calendar
@@ -91,8 +91,9 @@ def admin_courses_manage(request):
     courses = UserCourse.objects.all()
     return render(request, 'administrators/admin_courses_manage.html', {'courses': courses})
 
-def admin_professors(request):
-    return render(request, 'administrators/admin_professors.html')
+def admin_professors_manage(request):
+    professors = UserProfessor.objects.all()
+    return render(request, 'administrators/admin_professors_manage.html', {'professors': professors})
 
 def admin_students(request):
     return render(request, 'administrators/admin_students.html')
@@ -100,8 +101,8 @@ def admin_students(request):
 # def admin_courses_create(request):
 #     return render(request, 'administrators/admin_courses_create.html')
 
-def admin_professors_create(request):
-    return render(request, 'administrators/admin_professors_create.html')
+#def admin_professors_create(request):
+#    return render(request, 'administrators/admin_professors_create.html')
 
 def admin_students_create(request):
     return render(request, 'administrators/admin_students_create.html')
@@ -156,6 +157,43 @@ def delete_course(request, course_id):
         return redirect('admin_courses_manage')
     return render(request, 'administrators/admin_confirm_delete.html', {'course': course})
 
+# View professor details
+def professor_detail(request, professor_id):
+    professor = get_object_or_404(UserProfessor, professor_id=professor_id)
+    return render(request, 'administrators/admin_professor_view_details.html', {'professor': professor})
+
+# Create new professor profile
+def create_professor(request):
+    if request.method == 'POST':
+        form = ProfessorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_professors_manage')
+        else:
+            print(form.errors)  # <-- Print form errors for debugging
+    else:
+        form = ProfessorForm()
+    return render(request, 'administrators/admin_professor_create.html', {'form': form})
+
+# Edit an existing professor
+def edit_professor(request, professor_id):
+    professor = get_object_or_404(UserProfessor, professor_id=professor_id)
+    if request.method == 'POST':
+        form = ProfessorForm(request.POST, instance=professor)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_professors_manage')
+    else:
+        form = ProfessorForm(instance=professor)
+    return render(request, 'administrators/admin_professor_form.html', {'professor': professor, 'form': form})
+
+# Delete a professor
+def delete_professor(request, professor_id):
+    professor = get_object_or_404(UserProfessor, professor_id=professor_id)
+    if request.method == 'POST':
+        professor.delete()
+        return redirect('admin_professors_manage')
+    return render(request, 'administrators/admin_professor_delete.html', {'professor': professor})
 
 
 
