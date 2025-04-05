@@ -1,5 +1,5 @@
 from django import forms
-from user.models import UserCourse, UserProfessor
+from user.models import UserCourse
 
 
 DAYS_OF_WEEK = [
@@ -18,8 +18,3 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = UserCourse
         fields = ['course_name', 'subject', 'professor', 'room', 'semester', 'isavailable', 'start_time', 'end_time', 'day']
-
-class ProfessorForm(forms.ModelForm):
-    class Meta:
-        model = UserProfessor
-        fields = ['major', 'first_name', 'middle_name', 'last_name', 'date_of_birth', 'gender', 'username', 'password', 'email', 'date_created']
