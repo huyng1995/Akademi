@@ -9,9 +9,10 @@ urlpatterns = [
     path('semester/create/', views.create_semester, name='create_semester'),
 
     path('manage_courses/list/', views.admin_courses_manage, name='admin_courses_manage'),
+    path('manage_students/list/', views.admin_students_manage, name='students_manage'),
 
     path('professors/', views.admin_professors, name='admin_professors'),
-    path('students/', views.admin_students, name='admin_students'),
+    path('students/', views.admin_students_manage, name='admin_students'),
 
     # Admin course create (corrected)
     # path('courses_create/admin/', views.admin_courses_create, name='admin_courses_create'),
@@ -27,4 +28,14 @@ urlpatterns = [
 
     path('logout/', views.administrators_logout, name='logout'),
     path('update-avatar/', views.update_avatar, name='update_avatar'),
+
+    # Student paths
+
+    path('manage_students/<int:student_id>/', views.student_detail, name='student_detail'),
+
+    path('students_create/', views.create_student, name='create_student'),
+
+    path('manage_students/<int:student_id>/edit/', views.edit_student, name='edit_student'),
+    path('manage_students/<int:student_id>/delete/', views.delete_student, name='delete_student'),
+
 ]

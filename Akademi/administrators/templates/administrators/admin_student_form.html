@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to prevent cutoff */
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px; /* Added padding */
+      }
+      .container {
+        display: flex;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 750px;
+        gap: 30px;
+        margin-top: 20px; /* Added margin */
+      }
+      .details-container,
+      .form-container {
+        width: 50%;
+      }
+      h2 {
+        color: #333;
+        font-size: 22px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .student-info {
+        margin-bottom: 15px;
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        border-left: 4px solid #3498db;
+        border-radius: 8px;
+      }
+      strong {
+        color: #555;
+      }
+      p {
+        margin: 8px 0;
+        line-height: 1.6;
+      }
+      form {
+        margin-top: 10px;
+      }
+      label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+      }
+      .btn-container {
+        display: flex;
+        justify-content: flex-end; /* Changed from space-between */
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px; /* Added gap between buttons */
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+      .btn-save {
+        background-color: #28a745;
+        color: white;
+      }
+      .btn-save:hover {
+        background-color: #218838;
+      }
+      .btn-cancel {
+        background-color: #e74c3c;
+        color: white;
+      }
+      .btn-cancel:hover {
+        background-color: #c0392b;
+      }
+      .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #3498db;
+        margin: 10px auto;
+        display: block;
+      }
+      /* Responsive layout for smaller screens */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+        .container {
+          flex-direction: column;
+          width: 100%;
+          margin-top: 10px;
+        }
+        .details-container,
+        .form-container {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Student Details Section -->
+      <div class="details-container">
+        <h2>{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</h2>
+
+        <div class="student-info">
+          <p><strong>Username:</strong> {{ student.username }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Email:</strong> {{ student.email }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Date of Birth:</strong> {{ student.date_of_birth }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Gender:</strong> {{ student.gender }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Enrollment Date:</strong> {{ student.enrollment_date }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Grade Level:</strong> {{ student.grade_level }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>GPA:</strong> {{ student.gpa }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Total Units:</strong> {{ student.total_units }}</p>
+        </div>
+
+        <div class="student-info">
+          {% if student.avatar %}
+            <p><strong>Avatar:</strong></p>
+            <img src="{{ student.avatar.url }}" alt="Student Avatar" class="avatar-preview">
+          {% else %}
+            <p><strong>Avatar:</strong> No image uploaded</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Student Form Section -->
+      <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <label for="{{ form.first_name.id_for_label }}">First Name</label>
+          {{ form.first_name }}
+
+          <label for="{{ form.middle_name.id_for_label }}">Middle Name</label>
+          {{ form.middle_name }}
+
+          <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+          {{ form.last_name }}
+
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+
+          <label for="{{ form.email.id_for_label }}">Email</label>
+          {{ form.email }}
+
+          <label for="{{ form.date_of_birth.id_for_label }}">Date of Birth</label>
+          {{ form.date_of_birth }}
+
+          <label for="{{ form.gender.id_for_label }}">Gender</label>
+          {{ form.gender }}
+
+          <label for="{{ form.grade_level.id_for_label }}">Grade Level</label>
+          {{ form.grade_level }}
+
+          <label for="{{ form.avatar.id_for_label }}">Avatar</label>
+          {{ form.avatar }}
+
+          <div class="btn-container">
+            <button type="submit" class="btn-save">Save</button>
+            <a
+              href="{% url 'admin_students' %}"
+              class="btn-cancel"
+              style="
+                text-decoration: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+              "
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

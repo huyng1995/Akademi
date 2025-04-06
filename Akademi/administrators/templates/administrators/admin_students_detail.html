@@ -2,52 +2,52 @@
 <div style="text-align: center; margin-bottom: 20px; width: 100%">
   <input
     type="text"
-    id="courseSearch"
-    placeholder="Search for courses..."
+    id="studentSearch"
+    placeholder="Search for students..."
     class="form-control"
     style="width: 100%; margin-bottom: 10px"
-    onkeyup="filterCourses()"
+    onkeyup="filterStudents()"
   />
 </div>
 
-<!-- Course List Table -->
+<!-- Student List Table -->
 <table
   class="table table-bordered table-striped"
   style="margin-bottom: 20px; text-align: left; width: 100%"
-  id="courseTable"
+  id="studentTable"
 >
   <thead class="thead-light">
     <tr>
-      <th style="padding: 10px">Course Name</th>
+      <th style="padding: 10px">Student Name</th>
       <th style="padding: 10px; width: 250px; text-align: center">Actions</th>
     </tr>
   </thead>
-  <tbody id="courseTableBody">
-    {% for course in courses %}
-    <tr class="course-row">
+  <tbody id="studentTableBody">
+    {% for student in students %}
+    <tr class="student-row">
       <td style="padding: 10px">
         <a
-          href="{% url 'course_detail' course.course_id %}"
+          href="{% url 'student_detail' student.student_id %}"
           style="text-decoration: none; color: #333"
-          >{{ course.subject_name }}</a
+          >{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</a
         >
       </td>
       <td style="padding: 10px; text-align: center; white-space: nowrap">
         <div style="display: inline-block">
           <a
-            href="{% url 'course_detail' course_id=course.course_id %}"
+            href="{% url 'student_detail' student_id=student.student_id %}"
             class="btn btn-info btn-sm"
             style="margin-right: 5px"
             >View Details</a
           >
           <a
-            href="{% url 'edit_course' course_id=course.course_id %}"
+            href="{% url 'edit_student' student_id=student.student_id %}"
             class="btn btn-primary btn-sm"
             style="margin-right: 5px"
             >Edit</a
           >
           <a
-            href="{% url 'delete_course' course_id=course.course_id %}"
+            href="{% url 'delete_student' student_id=student.student_id %}"
             class="btn btn-danger btn-sm"
             >Delete</a
           >
@@ -57,21 +57,21 @@
     {% empty %}
     <tr>
       <td colspan="2" style="padding: 10px; text-align: center">
-        No courses available.
+        No students available.
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
-<!-- JavaScript to filter courses -->
+<!-- JavaScript to filter students -->
 <script>
-  function filterCourses() {
+  function filterStudents() {
     var input, filter, table, rows, td, i, txtValue;
-    input = document.getElementById("courseSearch");
+    input = document.getElementById("studentSearch");
     filter = input.value.toLowerCase();
-    table = document.getElementById("courseTableBody");
-    rows = table.getElementsByClassName("course-row");
+    table = document.getElementById("studentTableBody");
+    rows = table.getElementsByClassName("student-row");
 
     for (i = 0; i < rows.length; i++) {
       td = rows[i].getElementsByTagName("td")[0];

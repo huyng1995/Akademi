@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Changed from center to prevent cutoff */
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 800px; /* Increased width for two columns */
+        max-width: 95%;
+      }
+      h2 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 30px;
+        text-align: center;
+        grid-column: 1 / -1; /* Span across all columns */
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        gap: 15px;
+      }
+      .student-info {
+        padding: 12px 15px;
+        background-color: #f9f9f9;
+        border-left: 4px solid #3498db;
+        border-radius: 8px;
+      }
+      strong {
+        color: #555;
+      }
+      p {
+        margin: 8px 0;
+        line-height: 1.6;
+      }
+      .btn-container {
+        margin-top: 30px;
+        text-align: center;
+        grid-column: 1 / -1; /* Span across all columns */
+      }
+      a {
+        text-decoration: none;
+        color: #fff;
+        background-color: #3498db;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+      a:hover {
+        background-color: #2980b9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</h2>
+      
+      <div class="info-grid">
+        <div class="student-info">
+          <p><strong>Date of Birth:</strong> {{ student.date_of_birth }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Gender:</strong> {{ student.gender }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Enrollment Date:</strong> {{ student.enrollment_date }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Username:</strong> {{ student.username }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Password:</strong> {{ student.password }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Total Units:</strong> {{ student.total_units }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Date Created:</strong> {{ student.date_created }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Email:</strong> {{ student.email }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>GPA:</strong> {{ student.gpa }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Avatar:</strong> {{ student.avatar }}</p>
+        </div>
+
+        <div class="student-info">
+          <p><strong>Grade Level:</strong> {{ student.grade_level }}</p>
+        </div>
+      </div>
+
+      <div class="btn-container">
+        <a href="{% url 'admin_students' %}">Back to Students</a>
+      </div>
+    </div>
+  </body>
+</html>

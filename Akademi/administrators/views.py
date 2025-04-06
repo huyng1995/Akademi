@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from administrators.forms import CourseForm
+from administrators.forms import CourseForm, StudentForm
 from django.utils.timezone import now
 
 from django.http import JsonResponse
@@ -116,6 +116,10 @@ def admin_courses_manage(request):
     courses = UserCourse.objects.all()
     return render(request, 'administrators/admin_courses_manage.html', {'courses': courses})
 
+def admin_students_manage(request):
+    students = UserStudent.objects.all()
+    return render(request, 'administrators/admin_students_manage.html', {'students': students})
+
 def admin_professors(request):
     return render(request, 'administrators/admin_professors.html')
 
@@ -147,6 +151,11 @@ def base(request):
 def course_detail(request, course_id):
     course = get_object_or_404(UserCourse, course_id=course_id)
     return render(request, 'administrators/admin_courses_view_details.html', {'course': course})
+
+# View student details
+def student_detail(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    return render(request, 'administrators/admin_students_view_details.html', {'student': student})
 
 def create_course(request):
     if request.method == 'POST':
@@ -180,6 +189,39 @@ def delete_course(request, course_id):
         course.delete()
         return redirect('admin_courses_manage')
     return render(request, 'administrators/admin_confirm_delete.html', {'course': course})
+
+
+def create_student(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_students')
+        else:
+            print(form.errors)  # <-- Print form errors for debugging
+    else:
+        form = StudentForm()
+    return render(request, 'administrators/admin_students_create.html', {'form': form})
+
+# Edit an existing student
+def edit_student(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    if request.method == 'POST':
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_students_manage')
+    else:
+        form = StudentForm(instance=student)
+    return render(request, 'administrators/admin_student_form.html', {'student': student, 'form': form})
+
+# Delete a student
+def delete_student(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    if request.method == 'POST':
+        student.delete()
+        return redirect('admin_students')
+    return render(request, 'administrators/admin_confirm_student_delete.html', {'student': student})
 
 def administrators_logout(request):
     logout(request)  # Clears Django auth user session

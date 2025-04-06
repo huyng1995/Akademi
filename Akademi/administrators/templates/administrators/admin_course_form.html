@@ -124,7 +124,7 @@
     <div class="container">
       <!-- Course Details Section -->
       <div class="details-container">
-        <h2>{{ course.course_name }}</h2>
+        <h2>{{ course.subject_name }}</h2>
 
         <div class="course-info">
           <p>
@@ -156,10 +156,10 @@
         <form method="post">
           {% csrf_token %}
 
-          <label for="{{ form.course_name.id_for_label }}"
-            >{{ form.course_name.label }}</label
+          <label for="{{ form.subject_name.id_for_label }}"
+            >{{ form.subject_name.label }}</label
           >
-          {{ form.course_name }}
+          {{ form.subject_name }}
 
           <label for="{{ form.professor.id_for_label }}"
             >{{ form.professor.label }}</label
