@@ -21,7 +21,7 @@ urlpatterns = [
     path('manage_courses/<int:course_id>/delete/', views.delete_course, name='delete_course'),
 
     # Admin professor paths
-    path('professors_create', views.create_professor, name='create_professor'),
+    path('professor_create', views.create_professor, name='create_professor'),
     path('manage_professors/<int:professor_id>/', views.professor_detail, name='professor_detail'),
     path('manage_professors/<int:professor_id>/edit/', views.edit_professor, name='edit_professor'),
     path('manage_professors/<int:professor_id>/delete/', views.delete_professor, name='delete_professor'),
