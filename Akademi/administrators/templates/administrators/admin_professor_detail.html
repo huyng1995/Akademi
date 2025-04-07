@@ -1,0 +1,89 @@
+<!-- Search Input -->
+<div style="text-align: center; margin-bottom: 20px; width: 100%">
+    <input
+      type="text"
+      id="professorSearch"
+      placeholder="Search for professors..."
+      class="form-control"
+      style="width: 100%; margin-bottom: 10px"
+      onkeyup="filterProfessors()"
+    />
+  </div>
+  
+  <!-- Professor List Table -->
+  <table
+    class="table table-bordered table-striped"
+    style="margin-bottom: 20px; text-align: left; width: 100%"
+    id="professorTable"
+  >
+    <thead class="thead-light">
+      <tr>
+        <th style="padding: 10px">Professors</th>
+        <th style="padding: 10px; width: 250px; text-align: center">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="professorTableBody">
+      {% for professor in professors %}
+      <tr class="professor-row">
+        <td style="padding: 10px">
+          <a
+            href="{% url 'professor_detail' professor.professor_id %}"
+            style="text-decoration: none; color: #333"
+            >{{ professor.first_name }} {{ professor.middle_name }} {{ professor.last_name }}</a>
+        </td> 
+        
+        <td style="padding: 10px; text-align: center; white-space: nowrap">
+          <div style="display: inline-block">
+            <a
+              href="{% url 'professor_detail' professor_id=professor.professor_id %}"
+              class="btn btn-info btn-sm"
+              style="margin-right: 5px"
+              >View Details</a>
+            <a
+              href="{% url 'edit_professor' professor_id=professor.professor_id %}"
+              class="btn btn-primary btn-sm"
+              style="margin-right: 5px"
+              >Edit</a
+            >
+            <a
+              href="{% url 'delete_professor' professor_id=professor.professor_id %}"
+              class="btn btn-danger btn-sm"
+              >Delete</a
+            >
+          </div>
+        </td>
+        
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="2" style="padding: 10px; text-align: center">
+          No professors available.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <!-- JavaScript to filter professors -->
+  <script>
+    function filterProfessors() {
+      var input, filter, table, rows, td, i, txtValue;
+      input = document.getElementById("professorSearch");
+      filter = input.value.toLowerCase();
+      table = document.getElementById("professorTableBody");
+      rows = table.getElementsByClassName("professor-row");
+  
+      for (i = 0; i < rows.length; i++) {
+        td = rows[i].getElementsByTagName("td")[0];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            rows[i].style.display = "";
+          } else {
+            rows[i].style.display = "none";
+          }
+        }
+      }
+    }
+  </script>
+  
