@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from administrators.forms import CourseForm, ProfessorForm
+from administrators.forms import CourseForm, ProfessorForm, StudentForm
 from django.utils.timezone import now
 
 from django.http import JsonResponse
@@ -120,6 +120,10 @@ def admin_professors_manage(request):
     professors = UserProfessor.objects.all()
     return render(request, 'administrators/admin_professors_manage.html', {'professors': professors})
 
+def admin_students_manage(request):
+    students = UserStudent.objects.all()
+    return render(request, 'administrators/admin_students_manage.html', {'students': students})
+
 def admin_students(request):
     return render(request, 'administrators/admin_students.html')
 
@@ -219,6 +223,46 @@ def delete_professor(request, professor_id):
         professor.delete()
         return redirect('admin_professors_manage')
     return render(request, 'administrators/admin_professor_delete.html', {'professor': professor})
+
+
+# View student details
+def student_detail(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    return render(request, 'administrators/admin_students_view_details.html', {'student': student})
+
+
+# Create a new student
+def create_student(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_students')
+        else:
+            print(form.errors)  # <-- Print form errors for debugging
+    else:
+        form = StudentForm()
+    return render(request, 'administrators/admin_students_create.html', {'form': form})
+
+# Edit an existing student
+def edit_student(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    if request.method == 'POST':
+        form = StudentForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_students_manage')
+    else:
+        form = StudentForm(instance=student)
+    return render(request, 'administrators/admin_student_form.html', {'student': student, 'form': form})
+
+# Delete a student
+def delete_student(request, student_id):
+    student = get_object_or_404(UserStudent, student_id=student_id)
+    if request.method == 'POST':
+        student.delete()
+        return redirect('admin_students')
+    return render(request, 'administrators/admin_confirm_student_delete.html', {'student': student})
 
 def administrators_logout(request):
     logout(request)  # Clears Django auth user session

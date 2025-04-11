@@ -1,0 +1,88 @@
+<!-- Search Input -->
+<div style="text-align: center; margin-bottom: 20px; width: 100%">
+  <input
+    type="text"
+    id="studentSearch"
+    placeholder="Search for students..."
+    class="form-control"
+    style="width: 100%; margin-bottom: 10px"
+    onkeyup="filterStudents()"
+  />
+</div>
+
+<!-- Student List Table -->
+<table
+  class="table table-bordered table-striped"
+  style="margin-bottom: 20px; text-align: left; width: 100%"
+  id="studentTable"
+>
+  <thead class="thead-light">
+    <tr>
+      <th style="padding: 10px">Student Name</th>
+      <th style="padding: 10px; width: 250px; text-align: center">Actions</th>
+    </tr>
+  </thead>
+  <tbody id="studentTableBody">
+    {% for student in students %}
+    <tr class="student-row">
+      <td style="padding: 10px">
+        <a
+          href="{% url 'student_detail' student.student_id %}"
+          style="text-decoration: none; color: #333"
+          >{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}</a
+        >
+      </td>
+      <td style="padding: 10px; text-align: center; white-space: nowrap">
+        <div style="display: inline-block">
+          <a
+            href="{% url 'student_detail' student_id=student.student_id %}"
+            class="btn btn-info btn-sm"
+            style="margin-right: 5px"
+            >View Details</a
+          >
+          <a
+            href="{% url 'edit_student' student_id=student.student_id %}"
+            class="btn btn-primary btn-sm"
+            style="margin-right: 5px"
+            >Edit</a
+          >
+          <a
+            href="{% url 'delete_student' student_id=student.student_id %}"
+            class="btn btn-danger btn-sm"
+            >Delete</a
+          >
+        </div>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="2" style="padding: 10px; text-align: center">
+        No students available.
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- JavaScript to filter students -->
+<script>
+  function filterStudents() {
+    var input, filter, table, rows, td, i, txtValue;
+    input = document.getElementById("studentSearch");
+    filter = input.value.toLowerCase();
+    table = document.getElementById("studentTableBody");
+    rows = table.getElementsByClassName("student-row");
+
+    for (i = 0; i < rows.length; i++) {
+      td = rows[i].getElementsByTagName("td")[0];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
