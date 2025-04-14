@@ -1,20 +1,17 @@
-{% extends "admin_base.html" %} {% block body %}
+{% extends "admin_base.html" %}
+{% block body %}
 <div class="container">
   <div class="page-inner">
-    <div
-      class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-    ></div>
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"></div>
 
     <div class="row">
       <div class="col-md-12">
         <div class="card card-round">
           <div class="card-header">
             <div class="card-head-row card-tools-still-right">
-              <h4 class="card-title">Create Professor Profile</h4>
+              <h4 class="card-title">{% if professor %}Edit{% else %}Create{% endif %} Professor Here</h4>
               <div class="card-tools">
-                <button
-                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"
-                >
+                <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
                   <span class="fa fa-sync-alt"></span>
                 </button>
               </div>
@@ -22,65 +19,73 @@
           </div>
 
           <div class="card-body">
-            <form
-              id="professorForm"
-              method="POST"
-              action="{% url 'create_professor' %}"
-            >
+            <form id="professorForm" method="POST" action="{% if professor %}{% url 'update_professor' professor.id %}{% else %}{% url 'create_professor' %}{% endif %}">
               {% csrf_token %}
               <div class="table-responsive">
                 <table class="table table-bordered">
                   <tbody>
                     <tr>
                       <td><strong>First Name</strong></td>
-                      <td>{{ form.first_name }}</td>
+                      <td><input type="text" name="first_name" class="form-control" value="{{ form.first_name.value|default_if_none:'' }}" required></td>
                     </tr>
                     <tr>
                       <td><strong>Middle Name</strong></td>
-                      <td>{{ form.middle_name }}</td>
+                      <td><input type="text" name="middle_name" class="form-control" value="{{ form.middle_name.value|default_if_none:'' }}"></td>
                     </tr>
                     <tr>
                       <td><strong>Last Name</strong></td>
-                      <td>{{ form.last_name }}</td>
+                      <td><input type="text" name="last_name" class="form-control" value="{{ form.last_name.value|default_if_none:'' }}" required></td>
                     </tr>
                     <tr>
                       <td><strong>Date of Birth</strong></td>
-                      <td>{{ form.date_of_birth }}</td>
+                      <td><input type="date" name="date_of_birth" class="form-control" value="{{ form.date_of_birth.value|date:'Y-m-d' }}" required></td>
                     </tr>
                     <tr>
                       <td><strong>Gender</strong></td>
-                      <td>{{ form.gender }}</td>
+                      <td>
+                        <select name="gender" class="form-control" required>
+                          <option value="">Select Gender</option>
+                          <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Male</option>
+                          <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Female</option>
+                          <option value="O" {% if form.gender.value == 'O' %}selected{% endif %}>Other</option>
+                        </select>
+                      </td>
                     </tr>
                     <tr>
                       <td><strong>Username</strong></td>
-                      <td>{{ form.username }}</td>
+                      <td><input type="text" name="username" class="form-control" value="{{ form.username.value|default_if_none:'' }}" required></td>
                     </tr>
                     <tr>
                       <td><strong>Password</strong></td>
-                      <td>{{ form.password }}</td>
-                      <tr>
-                        <td><strong>Email</strong></td>
-                        <td>{{ form.email }}</td>
-                    <tr>
-                      <td><strong>Date</strong></td>
-                      <td>{{ form.date_created }}</td>
+                      <td><input type="password" name="password" class="form-control" {% if not professor %}required{% endif %}></td>
                     </tr>
-                      </tr>
+                    <tr>
+                      <td><strong>Email</strong></td>
+                      <td><input type="email" name="email" class="form-control" value="{{ form.email.value|default_if_none:'' }}" required></td>
+                    </tr>
+                    <tr>
+                      <td><strong>Date Created</strong></td>
+                      <td><input type="date" name="date_created" class="form-control" value="{{ form.date_created.value|date:'Y-m-d' }}" required></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+
               <div class="d-flex justify-content-end mt-3">
                 <button type="submit" class="custom-btn-save">
-                  <i class="fa fa-save"></i> Save Professor Info
+                  <i class="fa fa-save"></i> Save Professor
                 </button>
-                <button
-                  type="button"
+                <a
+                  href="{% url 'admin_professors_manage' %}"
                   class="custom-btn-cancel"
-                  onclick="resetForm();"
+                  style="
+                    text-decoration: none;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                  "
                 >
-                  <i class="fa fa-times-circle"></i> Cancel / Reset
-                </button>
+                  <i class="fa fa-times-circle"></i> Cancel
+                </a>
               </div>
             </form>
           </div>
@@ -89,12 +94,6 @@
     </div>
   </div>
 </div>
-
-<script>
-  function resetForm() {
-    document.getElementById("professorForm").reset();
-  }
-</script>
 
 <style>
   .custom-btn-save {
@@ -127,8 +126,18 @@
   .custom-btn-cancel:hover {
     background-color: #e53935;
   }
-  .custom-dropdown {
-    width: 10em; /* Adjust the width as needed */
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+  }
+  select.form-control {
+    height: auto;
+  }
+  .table td {
+    vertical-align: middle;
   }
 </style>
 {% endblock %}
