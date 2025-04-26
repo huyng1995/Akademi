@@ -144,16 +144,16 @@ class UserClassroom(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_classroom'
 
 
 class UserCourse(models.Model):
     course_id = models.AutoField(primary_key=True)
-    subject = models.ForeignKey('UserSubject', models.DO_NOTHING, blank=True, null=True)
-    professor = models.ForeignKey('UserProfessor', models.DO_NOTHING, blank=True, null=True)
-    room = models.ForeignKey(UserClassroom, models.DO_NOTHING, blank=True, null=True)
-    semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
+    subject = models.ForeignKey('UserSubject', models.SET_NULL, blank=True, null=True)
+    professor = models.ForeignKey('UserProfessor', models.SET_NULL, blank=True, null=True)
+    room = models.ForeignKey(UserClassroom, models.SET_NULL, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.SET_NULL, blank=True, null=True)
     course_name = models.CharField(max_length=50)
     isavailable = models.BooleanField(db_column='isAvailable')  # Field name made lowercase.
     start_time = models.DateTimeField()
@@ -165,15 +165,15 @@ class UserCourse(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_course'
 
 
 class UserCurrentCourses(models.Model):
     current_course_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
-    course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
-    semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
+    student = models.ForeignKey('UserStudent', models.SET_NULL, blank=True, null=True)
+    course = models.ForeignKey(UserCourse, models.SET_NULL, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.SET_NULL, blank=True, null=True)
     date_enrolled = models.DateTimeField()
     isdropped = models.BooleanField(db_column='isDropped')  # Field name made lowercase.
 
@@ -182,15 +182,15 @@ class UserCurrentCourses(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_current_courses'
 
 
 class UserEnrollmentHistory(models.Model):
     enrollment_history_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
-    course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
-    semester = models.ForeignKey('UserSemester', models.DO_NOTHING)
+    student = models.ForeignKey('UserStudent', models.SET_NULL, blank=True, null=True)
+    course = models.ForeignKey(UserCourse, models.SET_NULL, blank=True, null=True)
+    semester = models.ForeignKey('UserSemester', models.SET_NULL, blank=True, null=True)
     grade = models.CharField(max_length=3, blank=True, null=True)
     course_name = models.TextField(blank=True, null=True)
 
@@ -199,7 +199,7 @@ class UserEnrollmentHistory(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_enrollment_history'
         unique_together = (('student', 'course', 'semester'),)
 
@@ -212,13 +212,13 @@ class UserMajor(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_major'
 
 
 class UserProfessor(models.Model):
     professor_id = models.AutoField(primary_key=True)
-    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    major = models.ForeignKey(UserMajor, models.SET_NULL, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -234,7 +234,7 @@ class UserProfessor(models.Model):
         return f'Professor: {self.first_name} {self.last_name}'
 
     class Meta:
-        # managed = True
+        managed = True
         db_table = 'user_professor'
 
 
@@ -251,14 +251,14 @@ class UserSemester(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_semester'
 
 
 class UserStudent(models.Model):
    
     student_id = models.PositiveIntegerField(primary_key=True)
-    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    major = models.ForeignKey(UserMajor, models.SET_NULL, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -296,7 +296,7 @@ class UserStudent(models.Model):
 
 class UserSubject(models.Model):
     subject_id = models.AutoField(primary_key=True)
-    major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
+    major = models.ForeignKey(UserMajor, models.SET_NULL, blank=True, null=True)
     subject_course_number = models.BinaryField()
     subject_name = models.CharField(max_length=50)
     is_active = models.IntegerField()
@@ -305,5 +305,5 @@ class UserSubject(models.Model):
         return f'{self.subject_course_number}: {self.subject_name}'
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_subject'
