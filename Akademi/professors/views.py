@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from user.models import UserProfessor, UserSemester, UserCourse
+from user.models import UserCurrentCourses, UserStudent
 from django.http import JsonResponse
 from user.decorators import professor_required
 from datetime import date
@@ -42,12 +43,22 @@ def course_detail(request, course_id):
     professor = UserProfessor.objects.get(professor_id=professor_id)
     active_semester = UserSemester.objects.filter(is_active=True).first()
     courses = UserCourse.objects.filter(professor_id=professor_id, semester=active_semester)
+    # Get enrolled students for this course
+    enrolled_records = UserCurrentCourses.objects.filter(course_id=course_id, isdropped=False)
+    student_ids = enrolled_records.values_list('student_id', flat=True)
+    students = UserStudent.objects.filter(student_id__in=student_ids)
 
     return render(request, 'professors/course_detail.html', {
         'course': course,
         'courses': courses,
         'professor': professor,
+        'students': students,
     })
+
+def delete_student(request, student_id):
+    student = get_object_or_404(UserStudent, pk=student_id)
+    student.delete()
+    return redirect('professors_dashboard') 
 
 def professors_logout(request):
     logout(request)  # Clears Django auth user session

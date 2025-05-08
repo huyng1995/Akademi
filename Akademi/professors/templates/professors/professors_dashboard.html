@@ -16,33 +16,35 @@
   <div class="row">
     {% for course in courses %}
     <div class="col-sm-6 col-md-4">
-      <div class="card card-stats card-round">
-        <div class="card-body">
-          <div class="row align-items-center">
-            <div class="col-icon">
-              <div class="icon-big text-center icon-primary bubble-shadow-small">
-                <i class="fa-solid fa-book-open fa-lg"></i>
-              </div>
-            </div>
-            <div class="col col-stats ms-3 ms-sm-0">
-              <div class="numbers">
-                <h2 class="card-title">{{ course.course_name }}</h2>
-                <div class="text-muted mt-1">
-                  {{ course.start_time|time:"g:i A" }} – {{ course.end_time|time:"g:i A" }}
+      <a href="{% url 'professor_course_detail' course.course_id %}" class="text-decoration-none text-dark">
+        <div class="card card-stats card-round">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-icon">
+                <div class="icon-big text-center icon-primary bubble-shadow-small">
+                  <i class="fa-solid fa-book-open fa-lg"></i>
                 </div>
-                <p class="card-category">
-                  <strong>
-                    {% for d in course.day %}
-                      {{ d|slice:":1" }}
-                    {% endfor %}
-                    <br>
-                  </strong>
-                </p>
+              </div>
+              <div class="col col-stats ms-3 ms-sm-0">
+                <div class="numbers">
+                  <h2 class="card-title">{{ course.course_name }}</h2>
+                  <div class="text-muted mt-1">
+                    {{ course.start_time|time:"g:i A" }} – {{ course.end_time|time:"g:i A" }}
+                  </div>
+                  <p class="card-category">
+                    <strong>
+                      {% for d in course.day %}
+                        {{ d|slice:":1" }}
+                      {% endfor %}
+                      <br>
+                    </strong>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </a>
     </div>
     {% empty %}
     <div class="col-md-12">
