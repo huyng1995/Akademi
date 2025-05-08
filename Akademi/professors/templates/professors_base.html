@@ -34,11 +34,47 @@
     <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
 
+    <!-- FullCalendar CSS -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" /> -->
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
     <style>
       body {
           font-family:"Nunito", sans-serif;
       }
     </style>
+
+    <style>
+      #bootstrap-calendar {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .fc {
+        font-size: 1.5rem !important;  /* Double the base size */
+      }
+
+      .fc-event, .fc-event-dot {
+        color: black !important;
+      }
+      .fc-event-time {
+        display: none !important;
+      }      
+    </style>
+
+    <style>
+      .card-stats {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-stats:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+      }
+    </style>
+
   </head>
 
   <body>
@@ -57,25 +93,24 @@
               />
             </a>
 
-        <div class="nav-toggle">
-          <button class="btn btn-toggle toggle-sidebar">
-            <i class="gg-menu-right"></i>
-          </button>
+            <div class="nav-toggle">
+              <button class="btn btn-toggle toggle-sidebar">
+                <i class="gg-menu-right"></i>
+              </button>
 
-          <button class="btn btn-toggle sidenav-toggler">
-            <i class="gg-menu-left"></i>
-          </button>
+              <button class="btn btn-toggle sidenav-toggler">
+                <i class="gg-menu-left"></i>
+              </button>
+            </div>
+
+            <button class="topbar-toggler more">
+              <i class="gg-more-vertical-alt"></i>
+            </button>
+          </div>
+          <!-- End Logo Header -->
         </div>
-
-        <button class="topbar-toggler more">
-          <i class="gg-more-vertical-alt"></i>
-        </button>
-
-      </div>
-      <!-- End Logo Header -->
-    </div>
-
-        <!-- Sidebar Menu -->
+  
+        <!-- Sidebar Menu INSIDE .sidebar -->
         <div class="sidebar-wrapper scrollbar scrollbar-inner">
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
@@ -85,69 +120,27 @@
                   <p>Dashboard</p>
                 </a>
               </li>
-
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#students">
-                    <i class="fa-solid fa-user fa-lg"></i>
-                  <p>Students</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="students">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{% url 'admin_students' %}">
-                        <span class="sub-item">Manage Students</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="{% url 'admin_students_create' %}">
-                        <span class="sub-item">Create Students</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#professors">
-                    <i class="fa-solid fa-user-graduate fa-lg"></i>
-                  <p>Professors</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="professors">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="">
-                        <span class="sub-item">Manage Professors</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="">
-                        <span class="sub-item">Create Professors</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#courses">
-                  <i class="fas fa-pen-square"></i>
-                  <p>Courses</p>
+                  <i class="fa-solid fa-user fa-lg"></i>
+                  <p>Course</p>
                   <span class="caret"></span>
                 </a>
                 <div class="collapse" id="courses">
                   <ul class="nav nav-collapse">
+                    {% for course in courses %}
                     <li>
-                      <a href="">
-                        <span class="sub-item">Manage Courses</span>
+                      <a href="{% url 'professor_course_detail' course.course_id %}">
+                        <span class="sub-item">{{ course.course_name }}</span>
                       </a>
                     </li>
+                    {% empty %}
                     <li>
-                        <a href="">
-                          <span class="sub-item">Create Courses</span>
-                        </a>
-                      </li>
+                      <a href="#">
+                        <span class="sub-item text-muted">No courses</span>
+                      </a>
+                    </li>
+                    {% endfor %}
                   </ul>
                 </div>
               </li>
@@ -156,60 +149,35 @@
         </div>
       </div>
       <!-- End Sidebar -->
-
+  
+      <!-- Main Panel -->
       <div class="main-panel">
         <div class="main-header">
-          
           <div class="main-header-logo">
-            <!-- Logo Header, when zoom in-->
             <div class="logo-header" data-background-color="blue"></div>
-            <!-- End Logo Header -->
           </div>
-
-          <!-- Navbar Header -->          
-          <nav
-            class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom"
-          >
+  
+          <!-- Navbar Header -->
+          <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
             <div class="container-fluid">
-              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">                                                
-                <!-- user profile --> 
+              <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
+                <!-- User profile dropdown -->
                 <li class="nav-item topbar-user dropdown hidden-caret">
-                  <a
-                    class="dropdown-toggle profile-pic"
-                    href="#"
-                    role="button"
-                    id="#user_profile"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"                    
-                  >
+                  <a class="dropdown-toggle profile-pic" href="#" role="button" id="#user_profile" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="avatar-sm">
-                      <img
-                        id="professorAvatar1"
-                        src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
-                        alt="Avatar"
-                        class="avatar-img rounded-circle"
-                        onerror="fallbackAvatar(this)"
-                      />
+                      <img id="professorAvatar1" src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}" alt="Avatar" class="avatar-img rounded-circle" onerror="fallbackAvatar(this)" />
                     </div>
-
                     <span class="profile-username">
                       <span class="op-7">Hi,</span>
                       <span class="fw-bold">{{ professor.first_name }}</span>
                     </span>
                   </a>
-                  <!-- user profile dropdown--> 
                   <ul class="dropdown-menu dropdown-user animated fadeIn" aria-labelledby="#user_profile">
                     <div class="dropdown-user-scroll scrollbar-outer">
                       <li>
                         <div class="user-box">
                           <div class="avatar-lg">
-                            <img
-                              id="professorAvatar2"
-                              src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
-                              alt="Avatar"
-                              class="avatar-img rounded"
-                              onerror="fallbackAvatar(this)"
-                            />
+                            <img id="professorAvatar2" src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}" alt="Avatar" class="avatar-img rounded" onerror="fallbackAvatar(this)" />
                           </div>
                           <div class="u-text">
                             <h4>{{ professor.first_name }}</h4>
@@ -217,7 +185,6 @@
                           </div>
                         </div>
                       </li>
-
                       <li>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#my_profile">My Profile</a>
@@ -230,105 +197,69 @@
               </ul>
             </div>
           </nav>
-          <!-- End Navbar -->
         </div>
-
-        <!-- User Profile Modal -->
+  
+        <!-- Profile Modal -->
         <div class="modal" id="my_profile" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              
               <div class="modal-header">
                 <h5 class="modal-title">My Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true"></span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-
               <div class="modal-body text-center">
-
-                <img
-                id="professorAvatar"
-                src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}"
-                alt="Avatar"
-                class="rounded-circle mb-3"
-                style="width: 100px; height: 100px; object-fit: cover;"
-                onerror="fallbackAvatar(this)"
-                />
-      
-                <!-- Upload button -->
+                <img id="professorAvatar" src="{% if professor.avatar %}{{ professor.avatar.url }}{% else %}{% static 'images/profile2.jpg' %}{% endif %}" alt="Avatar" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;" onerror="fallbackAvatar(this)" />
                 <div class="mb-3">
                   <label class="btn btn-primary text-white">
                     Change Avatar
                     <input type="file" id="avatarInput" hidden accept="image/*">
                   </label>
                 </div>
-
-                <p><strong>Full Name:</strong> 
-                {{ professor.first_name }} {{ professor.middle_name }} {{ professor.last_name }}
-                </p>
-              
-                <p><strong>Email:</strong> 
-                {{ professor.email }}
-                </p>
-              
-                <p><strong>Username:</strong> 
-                {{ professor.username }}
-                </p>
+                <p><strong>Full Name:</strong> {{ professor.first_name }} {{ professor.middle_name }} {{ professor.last_name }}</p>
+                <p><strong>Email:</strong> {{ professor.email }}</p>
+                <p><strong>Username:</strong> {{ professor.username }}</p>
               </div>
-
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
               </div>
-
             </div>
           </div>
         </div>
-
+  
         <!-- Logout Modal -->
         <div class="modal" id="logout" tabindex="-1" aria-labelledby="myModal" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              
               <div class="modal-header">
                 <h5 class="modal-title">Log out?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true"></span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-
               <div class="modal-body">
                 <p>Are you sure you want to log out?</p>
               </div>
-
               <div class="modal-footer">
                 <a href="{% url 'professors_logout' %}" class="btn btn-warning">Yes</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
               </div>
-
             </div>
           </div>
         </div>
-
-        <!-- content here -->
+  
+        <!-- Page content -->
         {% block body %}
-        {% endblock %}   
-        <!-- Content End -->
-
+        {% endblock %}
+        <!-- End Page content -->
+  
         <footer class="footer">
           <div class="container-fluid d-flex justify-content-center">
             <div class="copyright">
-                Copyright &copy; <script>document.write(new Date().getFullYear())</script> by
-              <a href="">Beaver Guild</a>
+              Copyright &copy;
+              <script>document.write(new Date().getFullYear());</script> by <a href="">Beaver Guild</a>
             </div>
           </div>
         </footer>
-
       </div>
-
-      
     </div>
-
     <!--   Core JS Files   -->
     <script src="{% static 'assets/js/core/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'assets/js/core/popper.min.js' %}"></script>
@@ -344,6 +275,44 @@
 
     <!-- Kaiadmin JS -->
     <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('bootstrap-calendar');
+    
+        if (!calendarEl) {
+          console.warn('Calendar element not found!');
+          return;
+        }
+    
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          themeSystem: 'bootstrap5',
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            start: 'title',
+            center: '',
+            end: 'today prev,next'
+          },
+          editable: false,
+          selectable: false,
+          events: '/administrators/calendar/events/',
+    
+          eventClick: function (info) {
+            info.jsEvent.preventDefault();
+    
+            document.getElementById('modalEventTitle').textContent = info.event.title;
+            document.getElementById('modalEventStart').textContent = info.event.start?.toLocaleString();
+            document.getElementById('modalEventEnd').textContent = info.event.end?.toLocaleString() || 'N/A';
+            document.getElementById('modalEventDesc').textContent = info.event.extendedProps.description || '—';
+    
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+          }
+        });
+    
+        calendar.render();
+      });
+    </script>
 
     <script>
       document.getElementById('avatarInput').addEventListener('change', function () {

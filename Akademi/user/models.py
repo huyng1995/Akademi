@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models import JSONField
 
 class AdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='adminprofile')
@@ -156,16 +157,16 @@ class UserCourse(models.Model):
     semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
     course_name = models.CharField(max_length=50)
     isavailable = models.BooleanField(db_column='isAvailable')  # Field name made lowercase.
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    day = models.TextField(db_column='Day')  # Field name made lowercase.
+    start_time = models.TimeField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    day = JSONField(db_column='Day', default=list, blank=True, null=True,)
 
     def __str__(self):
         return f'{self.course_name}, Taught by {self.professor.first_name} {self.professor.last_name}'
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_course'
 
 

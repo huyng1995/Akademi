@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-from user.models import UserProfessor
+from user.models import UserProfessor, UserSemester, UserCourse
 from django.http import JsonResponse
 from user.decorators import professor_required
+from datetime import date
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 @professor_required
@@ -13,7 +15,39 @@ def professors_dashboard(request):
         return redirect('login')
 
     professor = UserProfessor.objects.get(professor_id=professor_id)
-    return render(request, 'professors/professors_dashboard.html', {'professor': professor})
+    active_semester = UserSemester.objects.filter(is_active=True).first()
+
+    courses = []
+    if active_semester:
+        courses = UserCourse.objects.filter(
+            professor_id=professor_id,
+            semester=active_semester
+        )
+    
+    today = date.today()
+    active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
+
+    return render(request, 'professors/professors_dashboard.html', {
+        'professor': professor,
+        'courses': courses,
+        'active_semester': active_semester,
+    })
+
+@professor_required
+def course_detail(request, course_id):
+    course = get_object_or_404(UserCourse, course_id=course_id)
+
+    # Get all courses for sidebar
+    professor_id = request.session.get('professor_id')
+    professor = UserProfessor.objects.get(professor_id=professor_id)
+    active_semester = UserSemester.objects.filter(is_active=True).first()
+    courses = UserCourse.objects.filter(professor_id=professor_id, semester=active_semester)
+
+    return render(request, 'professors/course_detail.html', {
+        'course': course,
+        'courses': courses,
+        'professor': professor,
+    })
 
 def professors_logout(request):
     logout(request)  # Clears Django auth user session
