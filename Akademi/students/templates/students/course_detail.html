@@ -1,0 +1,46 @@
+{% extends "students_base.html" %}
+{% block body %}
+
+<div class="container">
+<div class="page-inner">
+
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+        <div>
+            <h3 class="fw-bold mb-3">Courses</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-round">
+                
+                <div class="card-header">
+                    <div class="card-head-row card-tools-still-right">
+                        <h4 class="card-title">{{ course.course_name }} {{ course.course_id }}</h4>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-left">
+                        <p>
+                            <strong>Time:</strong> {{ course.start_time|time:"g:i A" }} – {{ course.end_time|time:"g:i A" }}
+                            &nbsp;&nbsp;&nbsp;
+                            <strong>Days:</strong>
+                            {% for d in course.day %}
+                              {{ d|slice:":1" }}
+                            {% endfor %}
+                            &nbsp;&nbsp;&nbsp;
+                            <strong>Location:</strong> {{ room.room_name }}
+                            &nbsp;&nbsp;&nbsp;
+                            <strong>Professor:</strong> {{ professor.first_name }} {{ professor.last_name }}
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}

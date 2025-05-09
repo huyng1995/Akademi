@@ -7,7 +7,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Administrator</title>
+    <title>Students</title>
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -33,6 +33,28 @@
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'assets/css/plugins.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'assets/css/kaiadmin.min.css' %}"/>
+    
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+    <style>
+      #bootstrap-calendar {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .fc {
+        font-size: 1.5rem !important;
+      }
+
+      .fc-event, .fc-event-dot {
+        color: black !important;
+      }
+
+      .fc-event-time {
+        display: none !important;
+      }
+    </style>
 
     <style>
       body {
@@ -84,73 +106,65 @@
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
-              </li>
-
+              </li>      
+             
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#students">
-                    <i class="fa-solid fa-user fa-lg"></i>
-                  <p>Students</p>
+                <a data-bs-toggle="collapse" href="#courses">
+                  <i class="fa-solid fa-pen-square fa-lg"></i>
+                  <p>Courses</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="students">
+                <div class="collapse" id="courses">
                   <ul class="nav nav-collapse">
+                    {% for course in courses %}
                     <li>
-                      <a href="{% url 'admin_students' %}">
-                        <span class="sub-item">Manage Students</span>
+                      <a href="{% url 'student_course_detail' course.course_id %}">
+                        <span class="sub-item">{{ course.course_name }}</span>
                       </a>
                     </li>
-                    <li>
-                      <a href="{% url 'admin_students_create' %}">
-                        <span class="sub-item">Create Students</span>
-                      </a>
-                    </li>
+                    {% empty %}
+                    <li><a><span class="sub-item text-muted">No courses</span></a></li>
+                    {% endfor %}
                   </ul>
                 </div>
               </li>
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#professors">
-                    <i class="fa-solid fa-user-graduate fa-lg"></i>
-                  <p>Professors</p>
-                  <span class="caret"></span>
+                    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+                  <p>Search</p>
                 </a>
-                <div class="collapse" id="professors">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="">
-                        <span class="sub-item">Manage Professors</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="">
-                        <span class="sub-item">Create Professors</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
 
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#courses">
-                  <i class="fas fa-pen-square"></i>
-                  <p>Courses</p>
+                <a data-bs-toggle="collapse" href="#students">
+                    <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                  <p>Cart</p>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#students">
+                    <i class="fa-solid fa-file fa-lg"></i>
+                  <p>Grade</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="courses">
+                <div class="collapse" id="students">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="">
-                        <span class="sub-item">Manage Courses</span>
+                      <a href="{% url 'admin_students' %}">
+                        <span class="sub-item">History</span>
                       </a>
                     </li>
                     <li>
-                        <a href="">
-                          <span class="sub-item">Create Courses</span>
-                        </a>
-                      </li>
+                      <a href="{% url 'admin_students_create' %}">
+                        <span class="sub-item">Transcript</span>
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </li>
+              
             </ul>
           </div>
         </div>
@@ -344,6 +358,44 @@
 
     <!-- Kaiadmin JS -->
     <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('bootstrap-calendar');
+
+        if (!calendarEl) {
+          console.warn('Calendar element not found!');
+          return;
+        }
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          themeSystem: 'bootstrap5',
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            start: 'title',
+            center: '',
+            end: 'today prev,next'
+          },
+          editable: false,
+          selectable: false,
+          events: '/administrators/calendar/events/',
+
+          eventClick: function (info) {
+            info.jsEvent.preventDefault();
+
+            document.getElementById('modalEventTitle').textContent = info.event.title;
+            document.getElementById('modalEventStart').textContent = info.event.start?.toLocaleString();
+            document.getElementById('modalEventEnd').textContent = info.event.end?.toLocaleString() || 'N/A';
+            document.getElementById('modalEventDesc').textContent = info.event.extendedProps.description || '—';
+
+            const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+            modal.show();
+          }
+        });
+
+        calendar.render();
+      });
+    </script>
 
     <script>
       document.getElementById('avatarInput').addEventListener('change', function () {

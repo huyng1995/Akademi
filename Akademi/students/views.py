@@ -5,6 +5,9 @@ from user.models import UserStudent
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from user.decorators import student_required
+from django.shortcuts import get_object_or_404
+from user.models import UserCourse, UserCurrentCourses, UserProfessor, UserStudent, UserSemester
+from datetime import date
 
 # Create your views here.
 @student_required
@@ -14,7 +17,54 @@ def students_dashboard(request):
         return redirect('login')
 
     student = UserStudent.objects.get(student_id=student_id)
-    return render(request, 'students/students_dashboard.html', {'student': student})
+
+    today = date.today()
+    active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
+
+    current_courses = UserCurrentCourses.objects.filter(
+        student=student,
+        semester=active_semester,
+        isdropped=False
+    ).select_related('course')
+
+    courses = [entry.course for entry in current_courses]
+
+    return render(request, 'students/students_dashboard.html', {
+        'student': student,
+        'courses': courses,
+        'active_semester': active_semester,
+    })
+
+@student_required
+def student_course_detail(request, course_id):
+    student_id = request.session.get('student_id')
+    student = get_object_or_404(UserStudent, student_id=student_id)
+
+    today = date.today()
+    active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
+
+    course = get_object_or_404(UserCourse, course_id=course_id)
+    professor = course.professor
+    room = course.room
+    
+    current_courses = UserCurrentCourses.objects.filter(
+        student=student,
+        semester=active_semester,
+        isdropped=False
+    ).select_related('course')
+
+    courses = [entry.course for entry in current_courses]
+
+    return render(request, 'students/course_detail.html', {
+        'student': student,
+        'course': course,
+        'professor': professor,
+        'room': room,
+        'courses': courses,
+        'active_semester': active_semester,
+    })
+
+
 
 def students_logout(request):
     logout(request)  # Clears Django auth user session

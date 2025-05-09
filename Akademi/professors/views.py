@@ -59,10 +59,13 @@ def course_detail(request, course_id):
     # Exclude already enrolled students
     available_students = UserStudent.objects.exclude(student_id__in=enrolled_ids)
 
+    room = course.room
+
     return render(request, 'professors/course_detail.html', {
         'course': course,
         'courses': courses,
         'professor': professor,
+        'room': room,
         'students': students,
         'available_students': available_students,
     })

@@ -29,6 +29,10 @@
                             {% for d in course.day %}
                               {{ d|slice:":1" }}
                             {% endfor %}
+                            &nbsp;&nbsp;&nbsp;
+                            <strong>Location:</strong> {{ room.room_name }}
+                            &nbsp;&nbsp;&nbsp;
+                            <strong>Professor:</strong> {{ professor.first_name }} {{ professor.last_name }}
                         </p>
 
                     </div>
