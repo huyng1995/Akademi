@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth import logout
-from user.models import UserProfessor, UserSemester, UserCourse
-from user.models import UserCurrentCourses, UserStudent
+from user.models import UserProfessor, UserSemester
+from user.models import UserCurrentCourses, UserCourse, UserStudent
 from django.http import JsonResponse
 from user.decorators import professor_required
 from datetime import date
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 # Create your views here.
 @professor_required
@@ -43,22 +44,60 @@ def course_detail(request, course_id):
     professor = UserProfessor.objects.get(professor_id=professor_id)
     active_semester = UserSemester.objects.filter(is_active=True).first()
     courses = UserCourse.objects.filter(professor_id=professor_id, semester=active_semester)
+
     # Get enrolled students for this course
     enrolled_records = UserCurrentCourses.objects.filter(course_id=course_id, isdropped=False)
     student_ids = enrolled_records.values_list('student_id', flat=True)
     students = UserStudent.objects.filter(student_id__in=student_ids)
+
+    # Get all student IDs already enrolled in this course
+    enrolled_ids = UserCurrentCourses.objects.filter(
+        course=course,
+        semester=active_semester
+    ).values_list('student_id', flat=True)
+
+    # Exclude already enrolled students
+    available_students = UserStudent.objects.exclude(student_id__in=enrolled_ids)
 
     return render(request, 'professors/course_detail.html', {
         'course': course,
         'courses': courses,
         'professor': professor,
         'students': students,
+        'available_students': available_students,
     })
 
-def delete_student(request, student_id):
-    student = get_object_or_404(UserStudent, pk=student_id)
-    student.delete()
-    return redirect('professors_dashboard') 
+@professor_required
+def drop_student_from_course(request, course_id, student_id):
+    try:
+        record = UserCurrentCourses.objects.get(course_id=course_id, student_id=student_id)
+        record.delete()
+    except UserCurrentCourses.DoesNotExist:
+        pass
+    return redirect('professor_course_detail', course_id=course_id) 
+
+def add_student_to_course(request, course_id, student_id):
+    if request.method == 'POST':
+        course = get_object_or_404(UserCourse, course_id=course_id)
+        student = get_object_or_404(UserStudent, student_id=student_id)
+
+        # Prevent duplicates
+        existing = UserCurrentCourses.objects.filter(
+            course=course,
+            student=student,
+            isdropped=False
+        ).first()
+
+        if not existing:
+            UserCurrentCourses.objects.create(
+                course=course,
+                student=student,
+                semester=course.semester,
+                date_enrolled=timezone.now(),
+                isdropped=False
+            )
+
+    return redirect('professor_course_detail', course_id=course_id)
 
 def professors_logout(request):
     logout(request)  # Clears Django auth user session

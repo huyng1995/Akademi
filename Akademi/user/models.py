@@ -183,7 +183,7 @@ class UserCurrentCourses(models.Model):
 
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'user_current_courses'
 
 

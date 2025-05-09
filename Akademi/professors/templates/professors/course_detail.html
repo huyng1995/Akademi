@@ -46,52 +46,114 @@
                     <div class="card-head-row card-tools-still-right">
                         <h4 class="card-title">Enrolled Students</h4>
                         <div class="card-tools">
-                        <button
-                            class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
+                        <button id="refreshSearch" class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
                             <span class="fa fa-sync-alt"></span>
                         </button>
-                        <a
-                            href="{% url 'create_student' %}"
-                            class="btn btn-primary btn-xs"
-                            style="
-                            margin-left: 10px;
-                            padding: 5px 10px;
-                            font-weight: bold;
-                            font-size: 1em;
-                            "
-                            ><i class="fa fa-plus me-1"></i> Add New Student</a>
+                        <button class="btn btn-primary btn-xs" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                            <i class="fa fa-plus me-1"></i> Add Student
+                        </button>
                         </div>
                   </div>
                 </div>
 
                 <div class="card-body">
+                    <!-- Search Input -->
+                    <div style="text-align: center; margin-bottom: 20px; width: 100%">
+                    <input
+                        type="text"
+                        id="classSearch"
+                        placeholder="Search for students..."
+                        class="form-control"
+                        style="width: 100%; margin-bottom: 10px"
+                        onkeyup="filterStudents()"
+                    />
+                    </div>
+
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                        <table  class="table table-bordered table-striped"
+                                style="margin-bottom: 20px; text-align: left; width: 100%"
+                                id="classTable">
                             <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Student Name</th>
-                                <th>Email</th>
-                                <th>GPA</th>
-                                <th>Actions</th>
-                            </tr>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Student Name</th>
+                                    <th>Email</th>
+                                    <th>GPA</th>
+                                    <th>Actions</th>
+                                </tr>
                             </thead>
-                            <tbody>
-                            {% for student in students %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ student.first_name }} {{ student.last_name }}</td>
-                                <td>{{ student.email }}</td>
-                                <td>{{ student.gpa }}</td>
-                                <td>
-                                    <a href="{% url 'student_detail' student.student_id %}" class="btn btn-sm btn-info">View Details</a>
-                                    <a href="{% url 'student_delete' student.student_id %}" class="btn btn-sm btn-danger">Delete</a>
-                                </td>
-                            </tr>
-                            {% empty %}
+                            <tbody id="classTableBody">
+                                {% for student in students %}
+                                <tr class="class-row">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ student.first_name }} {{ student.last_name }} {{ student.student_id }}</td>
+                                    <td>{{ student.email }}</td>
+                                    <td>{{ student.gpa }}</td>
+                                    <td style="padding: 10px; text-align: center; white-space: nowrap">
+                                        <div style="display: inline-block">
+                                        <button 
+                                            type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#studentDetailModal{{ student.student_id }}"
+                                            class="btn btn-info btn-sm "
+                                            style="margin-right: 5px"
+                                            >View Details</button
+                                        >
+                                        <button 
+                                            type="button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#studentDropModal{{ student.student_id }}"
+                                            class="btn btn-danger btn-sm"
+                                            style="margin-right: 5px"                                           
+                                            >Drop</button
+                                        >
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Student Detail Modal -->
+                                <div class="modal fade" id="studentDetailModal{{ student.student_id }}" tabindex="-1" aria-labelledby="studentDetailModalLabel{{ student.student_id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="studentDetailModalLabel{{ student.student_id }}">Student Details</h4>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+                                                <p><strong>Student Name:</strong> {{ student.first_name }} {{ student.middle_name }}</p>
+                                                <p><strong>Gender:</strong> {{ student.gender }}</p>
+                                                <p><strong>DOB:</strong> {{ student.date_of_birth }}</p>
+                                                <p><strong>Email:</strong> {{ student.email }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Student Drop Confirmation Modal -->
+                                <div class="modal fade" id="studentDropModal{{ student.student_id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Confirm Drop</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to drop {{ student.first_name }} {{ student.last_name }} from this course?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="{% url 'drop_student_from_course' course.course_id student.student_id %}" class="btn btn-danger">Yes</a>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% empty %}
                             <tr>
                                 <td colspan="4" class="text-center">No students enrolled in this course.</td>
-                            </tr>
+                            </tr>        
                             {% endfor %}
                             </tbody>
                         </table>
@@ -104,4 +166,101 @@
 
 </div>
 </div>
+
+<!-- Add Student Modal -->
+<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStudentModalLabel">Add Student to Class</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="searchStudentInput" class="form-control mb-3" placeholder="Search by Student ID" onkeyup="filterAvailableStudents()">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="availableStudentTable">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="availableStudentBody">
+                            {% for student in available_students %}
+                            <tr class="available-student-row">
+                                <td>{{ student.student_id }}</td>
+                                <td>{{ student.first_name }} {{ student.last_name }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'add_student_to_course' course.course_id student.student_id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">Add</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center">No available students.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterAvailableStudents() {
+    let input = document.getElementById("searchStudentInput").value.toLowerCase();
+    let rows = document.getElementsByClassName("available-student-row");
+    for (let i = 0; i < rows.length; i++) {
+        let td = rows[i].getElementsByTagName("td")[0];
+        let text = td.textContent || td.innerText;
+        rows[i].style.display = text.toLowerCase().includes(input) ? "" : "none";
+    }
+}
+</script>
+
+<!-- JS SCript to filter student in class -->
+<script>
+  function filterStudents() {
+    var input, filter, table, rows, td, i, txtValue;
+    input = document.getElementById("classSearch");
+    filter = input.value.toLowerCase();
+    table = document.getElementById("classTableBody");
+    rows = table.getElementsByClassName("class-row");
+
+    for (i = 0; i < rows.length; i++) {
+      td = rows[i].getElementsByTagName("td")[1];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+          rows[i].style.display = "";
+        } else {
+          rows[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>
+
+<script>
+  document.getElementById("refreshSearch").addEventListener("click", function () {
+    const input = document.getElementById("classSearch");
+    const rows = document.querySelectorAll("#classTableBody .class-row");
+
+    // Clear search box
+    input.value = "";
+
+    // Show all rows
+    rows.forEach(row => {
+      row.style.display = "";
+    });
+  });
+</script>
 {% endblock %}
