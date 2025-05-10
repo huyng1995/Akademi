@@ -1,0 +1,139 @@
+{% extends "students_base.html" %}
+
+{% block body %}
+<div class="container">
+  <div class="page-inner">
+
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+      <h3 class="fw-bold mb-3">Enrollment</h3>
+    </div>
+
+    <div class="card card-round mb-4">
+        <div class="card-header">
+            <h4 class="card-title">Current Enrollment </h4>
+        </div>
+        <div class="card-body">
+
+
+            <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Semester</th>
+                    <th>Professor</th>
+                    <th>Time</th>
+                    <th>Days</th>
+                    <th>Location</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.course_id }}</td>
+                    <td>{{ course.course_name }}</td>
+                    <td>{{ active_semester.term }} {{ active_semester.academic_year }}</td>
+                    <td>{{ course.professor.first_name }} {{ course.professor.last_name }}</td>
+                    <td>{{ course.start_time|time:"g:i A" }} – {{ course.end_time|time:"g:i A" }}</td>
+                    <td>
+                    {% for d in course.day %}
+                        {{ d|slice:":1" }}
+                    {% endfor %}
+                    </td>
+                    <td>{{ course.room.room_name }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="card card-round">
+      <div class="card-header">
+        <div class="card-head-row card-tools-still-right">
+          <h4 class="card-title">Enrollment History</h4>
+        </div>
+      </div>
+
+      <div class="card-body">
+            <!-- Semester Filter -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select id="semesterFilter" class="form-select">
+                    <option value="all">All Semesters</option>
+                    {% for semester in grouped_history.keys %}
+                        <option value="semester-{{ semester|slugify }}">{{ semester }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Search Input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                id="searchInput"
+                class="form-control"
+                placeholder="Search by course name..."
+                onkeyup="filterCourses()"
+              />
+            </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Semester</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for sem_label, records in grouped_history.items %}
+                {% for record in records %}
+                <tr class="course-row" data-semester="semester-{{ sem_label|slugify }}">
+                    <td>{{ record.course.course_id }}</td>
+                    <td>{{ record.course_name }}</td>
+                    <td>{{ record.semester.term }} {{ record.semester.academic_year }}</td>
+                    <td>{{ record.grade }}</td>
+                </tr>
+                {% endfor %}
+            {% empty %}
+                <tr>
+                <td colspan="4" class="text-center">No enrollment records found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- JS to filter courses -->
+<script>
+    function filterCourses() {
+        const semesterValue = document.getElementById("semesterFilter").value;
+        const searchValue = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll(".course-row");
+
+        rows.forEach(row => {
+            const courseName = row.querySelectorAll("td")[1].textContent.toLowerCase();
+            const semester = row.getAttribute("data-semester");
+            const matchesSemester = (semesterValue === "all" || semester === semesterValue);
+            const matchesSearch = courseName.includes(searchValue);
+            row.style.display = (matchesSemester && matchesSearch) ? "" : "none";
+        });
+    }
+  // Attach both event listeners
+  document.getElementById("semesterFilter").addEventListener("change", filterCourses);
+  document.getElementById("searchInput").addEventListener("keyup", filterCourses);
+</script>
+
+{% endblock %}

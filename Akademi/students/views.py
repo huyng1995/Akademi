@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from user.decorators import student_required
 from django.shortcuts import get_object_or_404
-from user.models import UserCourse, UserCurrentCourses, UserProfessor, UserStudent, UserSemester, UserStudentCart
+from user.models import UserCourse, UserCurrentCourses, UserProfessor, UserStudent, UserSemester, UserStudentCart, UserEnrollmentHistory
 from datetime import date
 from django.utils import timezone
 from django.contrib import messages
@@ -40,6 +40,31 @@ def students_dashboard(request):
         'courses': courses,
         'active_semester': active_semester,
     })
+
+def students_logout(request):
+    logout(request)  # Clears Django auth user session
+    request.session.flush()  # Clears student/professor session
+    return redirect('index')
+
+def students_update_avatar(request):
+
+    if request.method == 'POST' and request.FILES.get('avatar'):
+        student_id = request.session.get('student_id')
+
+        if not student_id:
+            return JsonResponse({'status': 'error', 'message': 'Not logged in'}, status=401)
+
+        student = UserStudent.objects.filter(student_id=student_id).first()
+        
+        if not student:
+            return JsonResponse({'status': 'error', 'message': 'Student not found'}, status=404)
+
+        student.avatar = request.FILES['avatar']
+        student.save()
+        
+        return JsonResponse({'status': 'success', 'avatar_url': student.avatar.url})
+    
+    return JsonResponse({'status': 'error'}, status=400)
 
 @student_required
 def student_course_detail(request, course_id):
@@ -186,29 +211,69 @@ def enroll_course(request, course_id):
     
     return redirect('students_dashboard')
 
+@student_required
+def enrollment_history(request):
+    student_id = request.session.get('student_id')
+    student = get_object_or_404(UserStudent, student_id=student_id)
 
+    # Get courses enrolled for sidebar
+    today = date.today()
+    active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
 
-def students_logout(request):
-    logout(request)  # Clears Django auth user session
-    request.session.flush()  # Clears student/professor session
-    return redirect('index')
+    current_courses = UserCurrentCourses.objects.filter(
+        student=student,
+        semester=active_semester,
+        isdropped=False
+    ).select_related('course')
 
-def students_update_avatar(request):
+    courses = [entry.course for entry in current_courses]
 
-    if request.method == 'POST' and request.FILES.get('avatar'):
-        student_id = request.session.get('student_id')
+    records = UserEnrollmentHistory.objects.filter(student_id=student_id).select_related('semester').order_by('-semester__start_date')
 
-        if not student_id:
-            return JsonResponse({'status': 'error', 'message': 'Not logged in'}, status=401)
+    grouped_history = {}
+    for record in records:
+        sem_label = f"{record.semester.term} {record.semester.academic_year}"
+        grouped_history.setdefault(sem_label, []).append(record)
 
-        student = UserStudent.objects.filter(student_id=student_id).first()
-        
-        if not student:
-            return JsonResponse({'status': 'error', 'message': 'Student not found'}, status=404)
+    return render(request, 'students/enrollment_history.html', {
+        'student': student,
+        'records': records,
+        'courses': courses,
+        'grouped_history': grouped_history,
+        'active_semester':active_semester,
+    })
 
-        student.avatar = request.FILES['avatar']
-        student.save()
-        
-        return JsonResponse({'status': 'success', 'avatar_url': student.avatar.url})
-    
-    return JsonResponse({'status': 'error'}, status=400)
+@student_required
+def student_transcript(request):
+    student_id = request.session.get('student_id')
+    student = get_object_or_404(UserStudent, student_id=student_id)
+
+    # Get courses enrolled for sidebar
+    today = date.today()
+    active_semester = UserSemester.objects.filter(start_date__lte=today, end_date__gte=today).first()
+
+    current_courses = UserCurrentCourses.objects.filter(
+        student=student,
+        semester=active_semester,
+        isdropped=False
+    ).select_related('course')
+
+    courses = [entry.course for entry in current_courses]
+
+    records = UserEnrollmentHistory.objects.filter(student_id=student_id).select_related('semester').order_by('-semester__start_date')
+
+    grouped_history = {}
+    for record in records:
+        sem_label = f"{record.semester.term} {record.semester.academic_year}"
+        grouped_history.setdefault(sem_label, []).append(record)
+
+    transcript_records = UserEnrollmentHistory.objects.filter(student=student) \
+        .select_related('semester') \
+        .order_by('-semester__start_date')
+
+    return render(request, 'students/student_transcript.html', {
+        'student': student,
+        'courses': courses,
+        'grouped_history': grouped_history,
+        'transcript_records': transcript_records,
+    })

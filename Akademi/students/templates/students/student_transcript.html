@@ -1,0 +1,79 @@
+{% extends "students_base.html" %}
+{% block body %}
+<div class="container">
+  <div class="page-inner">
+    <div class="d-flex justify-content-between align-items-center pt-2 pb-4">
+      <h3 class="fw-bold mb-3">Student Transcript</h3>
+      <button class="btn btn-primary" onclick="downloadPDF()">Export</button>
+    </div>
+
+    <div id="transcriptContent" class="card card-round">
+      <div class="card-body">
+        <h3>Student Transcript</h3>
+        <br>
+        <h5><strong>{{ student.first_name }} {{ student.last_name }}</strong></h5>
+        <p>
+            <strong>Student ID:</strong> {{ student.student_id }} 
+            &nbsp;&nbsp;&nbsp;
+            <strong>Major:</strong> {{ student.major }}
+            &nbsp;&nbsp;&nbsp;
+            <strong>GPA:</strong> {{ student.gpa }}
+        </p>
+
+        <hr>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Semester</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for sem_label, records in grouped_history.items %}
+                <tr class="table-secondary">
+                <td colspan="4" class="fw-bold">{{ sem_label }}</td>
+                </tr>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.course.course_id }}</td>
+                    <td>{{ record.course_name }}</td>
+                    <td>{{ record.semester.term }} {{ record.semester.academic_year }}</td>
+                    <td>{{ record.grade }}</td>
+                </tr>
+                {% endfor %}
+            {% empty %}
+                <tr>
+                <td colspan="4" class="text-center">No enrollment records found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jsPDF + html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+  function downloadPDF() {
+    const content = document.getElementById("transcriptContent");
+
+    html2canvas(content).then(canvas => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jspdf.jsPDF("p", "pt", "a4");
+      const imgWidth = 550;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 30, 30, imgWidth, imgHeight);
+      pdf.save("transcript.pdf");
+    });
+  }
+</script>
+{% endblock %}

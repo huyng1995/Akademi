@@ -188,7 +188,7 @@ class UserCurrentCourses(models.Model):
 
 
 class UserEnrollmentHistory(models.Model):
-    enrollment_history_id = models.AutoField(primary_key=True)
+    enrollment_id = models.AutoField(primary_key=True)
     student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
     course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
     semester = models.ForeignKey('UserSemester', models.DO_NOTHING)
@@ -197,7 +197,6 @@ class UserEnrollmentHistory(models.Model):
 
     def __str__(self):
         return f'{self.student}: {self.course_name}, {self.semester.term} {self.semester.academic_year}'
-
 
     class Meta:
         managed = False
