@@ -1,4 +1,5 @@
 {% extends "students_base.html" %}
+{% load static %}
 {% block body %}
 <div class="container">
   <div class="page-inner">
@@ -6,12 +7,15 @@
       <h3 class="fw-bold mb-3">Student Transcript</h3>
       <button class="btn btn-primary" onclick="downloadPDF()">Export</button>
     </div>
-
-    <div id="transcriptContent" class="card card-round">
+  <div id="transcriptWrapper" style="width: 900px; margin: auto;">
+    <div id="transcriptContent" class="card card-round" style="background: white; padding: 20px;">
+      <div tyle="display: flex; align-items: center; justify-content: flex-start;">
+        <img src="{% static 'images/school_logo.png' %}" alt="School Logo" style="height: 30px; margin-left: 15px; object-fit: contain;" crossorigin="anonymous">
+      </div>
       <div class="card-body">
-        <h3>Student Transcript</h3>
+        <h3 style="margin: 0;"><strong>Student Transcript</strong></h3>
         <br>
-        <h5><strong>{{ student.first_name }} {{ student.last_name }}</strong></h5>
+        <h5><strong>Student Name: {{ student.first_name }} {{ student.last_name }}</strong></h5>
         <p>
             <strong>Student ID:</strong> {{ student.student_id }} 
             &nbsp;&nbsp;&nbsp;
@@ -55,6 +59,7 @@
       </div>
     </div>
   </div>
+  </div>
 </div>
 
 <!-- jsPDF + html2canvas -->
@@ -65,14 +70,18 @@
   function downloadPDF() {
     const content = document.getElementById("transcriptContent");
 
-    html2canvas(content).then(canvas => {
+    html2canvas(content, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+    }).then(canvas => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jspdf.jsPDF("p", "pt", "a4");
       const imgWidth = 550;
       const imgHeight = canvas.height * imgWidth / canvas.width;
 
       pdf.addImage(imgData, 'PNG', 30, 30, imgWidth, imgHeight);
-      pdf.save("transcript.pdf");
+      pdf.save("student_transcript.pdf");
     });
   }
 </script>
