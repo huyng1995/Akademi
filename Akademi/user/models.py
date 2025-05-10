@@ -175,7 +175,7 @@ class UserCurrentCourses(models.Model):
     student = models.ForeignKey('UserStudent', models.DO_NOTHING, blank=True, null=True)
     course = models.ForeignKey(UserCourse, models.DO_NOTHING, blank=True, null=True)
     semester = models.ForeignKey('UserSemester', models.DO_NOTHING, blank=True, null=True)
-    date_enrolled = models.DateTimeField()
+    date_enrolled = models.DateField()
     isdropped = models.BooleanField(db_column='isDropped')  # Field name made lowercase.
 
     def __str__(self):
@@ -230,6 +230,7 @@ class UserProfessor(models.Model):
     email = models.CharField(max_length=100)
     date_created = models.DateField()
     avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     
     def __str__(self):
         return f'Professor: {self.first_name} {self.last_name}'
@@ -245,7 +246,7 @@ class UserSemester(models.Model):
     term = models.CharField(max_length=10)
     start_date = models.DateField()
     end_date = models.DateField()
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f'{self.term} {self.academic_year}'
@@ -273,7 +274,8 @@ class UserStudent(models.Model):
     email = models.CharField(max_length=100)
     gpa = models.FloatField()
     avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
-    
+    is_active = models.BooleanField(default=True)
+
     GRADE_LEVEL_CHOICES = [
         ('Freshman', 'Freshman'),
         ('Sophomore', 'Sophomore'),
@@ -308,3 +310,12 @@ class UserSubject(models.Model):
     class Meta:
         managed = False
         db_table = 'user_subject'
+
+
+class UserStudentCart(models.Model):
+    student = models.ForeignKey(UserStudent, on_delete=models.CASCADE)
+    course = models.ForeignKey(UserCourse, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('student', 'course')
+        db_table = 'user_studentcart'

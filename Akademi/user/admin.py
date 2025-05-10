@@ -8,7 +8,7 @@ from .models import UserSemester
 from .models import UserCourse
 from .models import UserEnrollmentHistory
 from .models import UserCurrentCourses
-
+from .models import UserStudentCart
 
 # Register your models here.
 admin.site.register(UserStudent)
@@ -20,3 +20,5 @@ admin.site.register(UserSemester)
 admin.site.register(UserCourse)
 admin.site.register(UserEnrollmentHistory)
 admin.site.register(UserCurrentCourses)
+admin.site.register(UserStudentCart)
+

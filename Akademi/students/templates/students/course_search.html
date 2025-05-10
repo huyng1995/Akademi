@@ -1,0 +1,145 @@
+{% extends "students_base.html" %}
+{% block body %}
+
+<div class="container">
+  <div class="page-inner">
+
+{% if messages %}
+  <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 600px;">
+    <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+      <div>
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      </div>
+      <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+{% endif %}
+
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+      <h3 class="fw-bold mb-3">Course Search</h3>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-round">
+          <div class="card-header">
+            <div class="card-head-row card-tools-still-right">
+              <h4 class="card-title">Available Courses</h4>
+              <div class="card-tools">
+                <button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card" onclick="location.reload();">
+                  <span class="fa fa-sync-alt"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select id="semesterFilter" class="form-select">
+                    <option value="all">All Semesters</option>
+                    {% for semester in future_semesters %}
+                        <option value="semester-{{ semester.semester_id }}">{{ semester.term }} {{ semester.academic_year }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Search Input -->
+            <div class="mb-3">
+              <input
+                type="text"
+                id="searchInput"
+                class="form-control"
+                placeholder="Search by course name..."
+                onkeyup="filterCourses()"
+              />
+            </div>
+
+            <!-- Course Table -->
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Semester</th>
+                        <th>Professor</th>
+                        <th>Time</th>
+                        <th>Days</th>
+                        <th>Location</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="courseTableBody">
+                  {% for search_course in search_courses %}
+                    <tr class="course-row" data-semester="semester-{{ search_course.semester.semester_id }}">
+                        <td>{{ search_course.course_id }}</td>
+                        <td>{{ search_course.course_name }}</td>
+                        <td>{{ search_course.semester.term }} {{ search_course.semester.academic_year }}</td>
+                        <td>{{ search_course.professor.first_name }} {{ search_course.professor.last_name }}</td>
+                        <td>{{ search_course.start_time|time:"g:i A" }} – {{ search_course.end_time|time:"g:i A" }}</td>
+                        <td>
+                        {% for d in search_course.day %}
+                            {{ d|slice:":1" }}
+                        {% endfor %}
+                        </td>
+                        <td>{{ search_course.room.room_name }}</td>
+                        <td>
+                        <form method="POST" action="{% url 'add_to_cart' search_course.course_id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-success btn-sm">Add to Cart</button>
+                        </form>
+                        </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center">No available courses.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS to filter courses -->
+<script>
+    function filterCourses() {
+        const semesterValue = document.getElementById("semesterFilter").value;
+        const searchValue = document.getElementById("searchInput").value.toLowerCase();
+        const rows = document.querySelectorAll(".course-row");
+
+    rows.forEach(row => {
+        const courseName = row.querySelectorAll("td")[1].textContent.toLowerCase();
+        const semester = row.getAttribute("data-semester");
+        const matchesSemester = (semesterValue === "all" || semester === semesterValue);
+        const matchesSearch = courseName.includes(searchValue);
+
+        row.style.display = (matchesSemester && matchesSearch) ? "" : "none";
+    });
+    }
+  // Attach both event listeners
+  document.getElementById("semesterFilter").addEventListener("change", filterCourses);
+  document.getElementById("searchInput").addEventListener("keyup", filterCourses);
+</script>
+
+<!-- JS to dismiss message -->
+<script>
+  // Auto-dismiss message after 5 seconds
+  setTimeout(() => {
+    const alert = document.getElementById('message-container');
+    if (alert) {
+      alert.classList.remove('show');
+      alert.classList.add('fade');
+    }
+  }, 5000);
+</script>
+{% endblock %}

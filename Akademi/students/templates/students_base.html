@@ -61,6 +61,19 @@
           font-family:"Nunito", sans-serif;
       }
     </style>
+
+    <style>
+      .card-stats {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card-stats:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+      }
+    </style>
+    
   </head>
 
   <body>
@@ -119,33 +132,37 @@
                     {% for course in courses %}
                     <li>
                       <a href="{% url 'student_course_detail' course.course_id %}">
-                        <span class="sub-item">{{ course.course_name }}</span>
+                      <span class="sub-item">{{ course.course_name }}</span>
                       </a>
                     </li>
                     {% empty %}
-                    <li><a><span class="sub-item text-muted">No courses</span></a></li>
+                    <li>
+                      <a href="{% url 'students_dashboard' %}">
+                        <span class="sub-item text-muted">No courses</span>
+                      </a>
+                    </li>
                     {% endfor %}
                   </ul>
                 </div>
               </li>
 
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#professors">
-                    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+                <a href="{% url 'course_search' %}">
+                  <i class="fa-solid fa-magnifying-glass fa-lg"></i>
                   <p>Search</p>
                 </a>
               </li>
 
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#students">
-                    <i class="fa-solid fa-cart-shopping fa-lg"></i>
+                <a href="{% url 'course_cart' %}">
+                  <i class="fa-solid fa-cart-shopping fa-lg"></i>
                   <p>Cart</p>
                 </a>
               </li>
 
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#students">
-                    <i class="fa-solid fa-file fa-lg"></i>
+                  <i class="fa-solid fa-file fa-lg"></i>
                   <p>Grade</p>
                   <span class="caret"></span>
                 </a>

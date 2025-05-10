@@ -1,0 +1,110 @@
+{% extends "students_base.html" %}
+
+{% block body %}
+
+<div class="container">
+  <div class="page-inner">
+    
+    {% if messages %}
+    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 600px;">
+        <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+            <div>
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if messages %}
+    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 600px;">
+        <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+            <div>
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+        <h3 class="fw-bold mb-3">Course Cart</h3>
+    </div>
+
+    {% for item in cart_items %}
+    <div class="col-sm-6 col-md-4">
+        <div class="card card-stats card-round mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col col-stats ms-3 ms-sm-0">
+                    <div class="numbers">
+                        <h5 class="card-title">{{ item.course.course_name }}</h5>
+                        <p class="text-muted">
+                            {{ item.course.start_time|time:"g:i A" }} – {{ item.course.end_time|time:"g:i A" }}<br>
+                            Days:
+                            {% for d in item.course.day %}
+                            {{ d|slice:":1" }}
+                            {% endfor %}<br>
+                            Location: {{ item.course.room.room_name }}<br>
+                            Professor: {{ item.course.professor.first_name }} {{ item.course.professor.last_name }}
+                        </p>
+                        <button class="btn btn-lm btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#enrollModal{{ item.course.course_id }}">
+                            Enroll
+                        </button>
+                        <form method="POST" action="{% url 'remove_from_cart' item.course.course_id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button class="btn btn-lm btn-danger fw-bold">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- Enroll Confirmation Modal -->
+    <div class="modal fade" id="enrollModal{{ item.course.course_id }}" tabindex="-1" aria-labelledby="enrollModalLabel{{ item.course.course_id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            
+                <div class="modal-header">
+                    <h5 class="modal-title" id="enrollModalLabel{{ item.course.course_id }}">Confirm Enrollment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    Are you sure you want to enroll in <strong>{{ item.course.course_name }}</strong>?
+                </div>
+                
+                <div class="modal-footer">
+                    <form method="POST" action="{% url 'enroll_course' item.course.course_id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">Yes</button>
+                    </form>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">No courses in your cart.</div>
+    {% endfor %}
+    </div>
+</div>
+
+<!-- JS to dismiss message -->
+<script>
+  // Auto-dismiss message after 5 seconds
+  setTimeout(() => {
+    const alert = document.getElementById('message-container');
+    if (alert) {
+      alert.classList.remove('show');
+      alert.classList.add('fade');
+    }
+  }, 5000);
+</script>
+{% endblock %}
