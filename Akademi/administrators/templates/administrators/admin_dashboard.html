@@ -4,29 +4,30 @@
 <!-- content here -->
 <div class="container">
   <div class="page-inner">
-    
+
+    <!-- Message -->
     {% if messages %}
-      <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; max-width: 600px;">
-        <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
-          <div>
-            {% for message in messages %}
-              {{ message }}
-            {% endfor %}
-          </div>
-          <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; max-width: 600px;">
+      <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+        <div>
+          {% for message in messages %}
+            {{ message }}
+          {% endfor %}
         </div>
+        <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
+    </div>
     {% endif %}
 
-    <div
-      class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-    >
+    <!-- Page Title -->
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
       <div>
         <h3 class="fw-bold mb-3">Dashboard</h3>
         <h6 class="op-7 mb-2">Welcome Admin!</h6>
       </div>
     </div>
 
+    <!-- Dashboard Cards Row -->
     <div class="row">
 
       <div class="col-sm-6 col-md-3">
@@ -49,7 +50,7 @@
         </div>
       </div>
 
-      <a href="{% url 'admin_students' %}" class="col-sm-6 col-md-3">
+      <a href="{% url 'admin_students_manage' %}" class="col-sm-6 col-md-3">
         <div class="card card-stats card-round">
           <div class="card-body">
             <div class="row align-items-center">
@@ -112,6 +113,7 @@
 
     </div>
 
+    <!-- Calendar Row -->
     <div class="row">
       <div class="col-md-12">
         <div class="card card-round">
@@ -148,7 +150,7 @@
   </div>
 </div>
 
-<!-- Event Modal -->
+<!-- Event Detail Modal -->
 <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -166,7 +168,7 @@
   </div>
 </div>
 
-<!-- Create Event Modal -->
+<!-- Event Create Modal -->
 <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <!-- <form id="eventForm" class="modal-content"> -->
@@ -185,10 +187,6 @@
           <label class="form-label">Start</label>
           <input type="datetime-local" name="start" class="form-control" required />
         </div>
-        <!-- <div class="mb-3">
-          <label class="form-label">End</label>
-          <input type="datetime-local" name="end" class="form-control" />
-        </div> -->
         <div class="mb-3">
           <label class="form-label">Description</label>
           <textarea name="description" class="form-control" rows="3"></textarea>
@@ -219,7 +217,7 @@
   </div>
 </div>
 
-<!-- Create Semester Modal -->
+<!-- Semester Create Modal -->
 <div class="modal fade" id="createSemesterModal" tabindex="-1" aria-labelledby="createSemesterModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <form method="POST" action="{% url 'create_semester' %}" class="modal-content">
@@ -253,6 +251,7 @@
   </div>
 </div>
 
+<!-- JS Script to close message -->
 <script>
   setTimeout(() => {
     const alert = document.getElementById("message-container");

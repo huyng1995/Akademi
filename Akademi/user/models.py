@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models import JSONField
+from datetime import date
 
 class AdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='adminprofile')
@@ -258,7 +259,7 @@ class UserSemester(models.Model):
 
 class UserStudent(models.Model):
    
-    student_id = models.PositiveIntegerField(primary_key=True)
+    student_id = models.AutoField(primary_key=True)
     major = models.ForeignKey(UserMajor, models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
@@ -268,10 +269,10 @@ class UserStudent(models.Model):
     enrollment_date = models.DateField()
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
-    total_units = models.IntegerField()
-    date_created = models.DateField()
+    total_units = models.IntegerField(default='0')
+    date_created = models.DateField(default=date.today)
     email = models.CharField(max_length=100)
-    gpa = models.FloatField()
+    gpa = models.FloatField(default='0')
     avatar = models.ImageField(upload_to='avatars/', default='avatars/profile2.jpg', blank=True, null=True)
     is_active = models.BooleanField(default=True)
 

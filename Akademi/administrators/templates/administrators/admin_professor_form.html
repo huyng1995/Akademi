@@ -184,7 +184,7 @@
 
       <!-- Professor Form Section -->
       <div class="form-container">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
 
           <label for="{{ form.first_name.id_for_label }}"

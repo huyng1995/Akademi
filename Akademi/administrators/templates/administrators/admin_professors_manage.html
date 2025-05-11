@@ -2,6 +2,20 @@
 <!-- content here -->
 <div class="container">
   <div class="page-inner">
+
+    {% if messages %}
+      <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; max-width: 600px;">
+        <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+          <div>
+            {% for message in messages %}
+              {{ message }}
+            {% endfor %}
+          </div>
+          <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+    {% endif %}
+
     <div
       class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
     ></div>
@@ -13,12 +27,9 @@
             <div class="card-head-row card-tools-still-right">
               <h4 class="card-title">Manage Professors Here</h4>
               <div class="card-tools">
-                <button
-                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
-                  <span class="fa fa-sync-alt"></span>
-                </button>
+
                 <a
-                  href="{% url 'create_professor' %}"
+                  href="{% url 'admin_professors_create' %}"
                   class="btn btn-primary btn-xs"
                   style="
                     margin-left: 10px;
@@ -27,11 +38,17 @@
                     font-size: 1em;
                   "
                   ><i class="fa fa-plus me-1"></i> Add New Professor</a>
+
+                <button
+                  class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card">
+                  <span class="fa fa-sync-alt"></span>
+                </button>
+
               </div>
             </div>
           </div>
           <div class="card-body">
-            <div>{% include "administrators/admin_professor_detail.html" %}</div>
+            <div>{% include "administrators/admin_professors_detail.html" %}</div>
             <div class="d-flex justify-content-center">
               <div
                 class="border rounded"
@@ -51,4 +68,14 @@
     </div>
   </div>
 </div>
+
+<script>
+  setTimeout(() => {
+    const alert = document.getElementById("message-container");
+    if (alert) {
+      alert.classList.remove("show");
+      alert.classList.add("fade");
+    }
+  }, 4000);
+</script>
 {% endblock %}

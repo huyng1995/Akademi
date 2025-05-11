@@ -2,6 +2,21 @@
 {% block body %}
 <div class="container">
   <div class="page-inner">
+
+    <!-- Message -->
+    {% if messages %}
+    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; max-width: 600px;">
+      <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+        <div>
+          {% for message in messages %}
+            {{ message }}
+          {% endfor %}
+        </div>
+        <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+    {% endif %}
+    
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"></div>
 
     <div class="row">
@@ -19,7 +34,7 @@
           </div>
 
           <div class="card-body">
-            <form id="professorForm" method="POST" action="{% if professor %}{% url 'update_professor' professor.id %}{% else %}{% url 'create_professor' %}{% endif %}">
+            <form method="POST" action="{% url 'create_professor' %}">
               {% csrf_token %}
               <div class="table-responsive">
                 <table class="table table-bordered">
@@ -47,7 +62,6 @@
                           <option value="">Select Gender</option>
                           <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Male</option>
                           <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Female</option>
-                          <option value="O" {% if form.gender.value == 'O' %}selected{% endif %}>Other</option>
                         </select>
                       </td>
                     </tr>
@@ -95,6 +109,18 @@
   </div>
 </div>
 
+<!-- JS Script to close message -->
+<script>
+  setTimeout(() => {
+    const alert = document.getElementById("message-container");
+    if (alert) {
+      alert.classList.remove("show");
+      alert.classList.add("fade");
+    }
+  }, 4000);
+</script>
+
+<!-- Button Sustom Style-->
 <style>
   .custom-btn-save {
     background-color: #1572e8 !important;

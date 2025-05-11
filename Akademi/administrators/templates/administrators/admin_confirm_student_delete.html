@@ -63,11 +63,11 @@
         <strong>"{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}  "</strong>?
       </h2>
 
-      <form method="post">
+      <form method="post" action="{% url 'delete_student' student.student_id %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="btn-container">
           <button type="submit">Yes, Delete</button>
-          <a href="{% url 'admin_students' %}">Cancel</a>
+          <a href="{% url 'admin_students_manage' %}">Cancel</a>
         </div>
       </form>
     </div>

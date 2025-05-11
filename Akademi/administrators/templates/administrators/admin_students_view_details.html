@@ -106,16 +106,12 @@
         </div>
 
         <div class="student-info">
-          <p><strong>Avatar:</strong> {{ student.avatar }}</p>
-        </div>
-
-        <div class="student-info">
           <p><strong>Grade Level:</strong> {{ student.grade_level }}</p>
         </div>
       </div>
 
       <div class="btn-container">
-        <a href="{% url 'admin_students' %}">Back to Students</a>
+        <a href="{% url 'admin_students_manage' %}">Back to Students</a>
       </div>
     </div>
   </body>

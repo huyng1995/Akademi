@@ -158,14 +158,14 @@
           <p><strong>Total Units:</strong> {{ student.total_units }}</p>
         </div>
 
-        <div class="student-info">
+        <!-- <div class="student-info">
           {% if student.avatar %}
             <p><strong>Avatar:</strong></p>
             <img src="{{ student.avatar.url }}" alt="Student Avatar" class="avatar-preview">
           {% else %}
             <p><strong>Avatar:</strong> No image uploaded</p>
           {% endif %}
-        </div>
+        </div> -->
       </div>
 
       <!-- Student Form Section -->
@@ -197,13 +197,13 @@
           <label for="{{ form.grade_level.id_for_label }}">Grade Level</label>
           {{ form.grade_level }}
 
-          <label for="{{ form.avatar.id_for_label }}">Avatar</label>
-          {{ form.avatar }}
+          <!-- <label for="{{ form.avatar.id_for_label }}">Avatar</label>
+          {{ form.avatar }} -->
 
           <div class="btn-container">
             <button type="submit" class="btn-save">Save</button>
             <a
-              href="{% url 'admin_students' %}"
+              href="{% url 'admin_students_manage' %}"
               class="btn-cancel"
               style="
                 text-decoration: none;

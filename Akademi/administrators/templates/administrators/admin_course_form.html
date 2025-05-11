@@ -149,6 +149,10 @@
         <div class="course-info">
           <p><strong>End Time:</strong> {{ course.end_time }}</p>
         </div>
+
+        <div class="course-info">
+          <p><strong>Availability:</strong> {{ course.isavailable }}</p>
+        </div>
       </div>
 
       <!-- Course Form Section -->
@@ -186,23 +190,12 @@
           >
           {{ form.end_time }}
 
-          <div class="btn-container">
-            <!-- Checkbox to the far left -->
-            <div class="checkbox-container">
-              <input
-                type="checkbox"
-                id="isavailable"
-                name="isavailable"
-                {%
-                if
-                form.isavailable.value
-                %}checked{%
-                endif
-                %}
-              />
-              <label for="isavailable"><strong>Is Available?</strong></label>
-            </div>
+          <label for="{{ form.isavailable.id_for_label }}"
+            >{{ form.isavailable.label }}</label
+          >
+          {{ form.isavailable }}
 
+          <div class="btn-container">
             <!-- Buttons on the right -->
             <div class="btn-right">
               <button type="submit" class="btn-save">Save</button>
