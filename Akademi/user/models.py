@@ -240,7 +240,7 @@ class UserProfessor(models.Model):
 
 
 class UserSemester(models.Model):
-    semester_id = models.PositiveIntegerField(primary_key=True)
+    semester_id = models.AutoField(primary_key=True)
     academic_year = models.CharField(max_length=10)
     term = models.CharField(max_length=10)
     start_date = models.DateField()

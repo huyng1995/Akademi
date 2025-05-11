@@ -437,6 +437,7 @@
     <!-- Kaiadmin JS -->
     <script src="{% static 'assets/js/kaiadmin.min.js' %}"></script>
 
+    <!-- JS Script to generate calendar and create new event -->
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const calendarEl = document.getElementById('bootstrap-calendar');
@@ -467,63 +468,10 @@
         });
 
         calendar.render();
-
-        // Handle form submission
-        document.getElementById('eventForm').addEventListener('submit', function (e) {
-          e.preventDefault();
-
-          const formData = new FormData(this);
-
-          fetch('/administrators/calendar/events/create/', {
-            method: 'POST',
-            headers: {
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: formData
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === 'success') {
-              calendar.refetchEvents();
-              const modal = bootstrap.Modal.getInstance(document.getElementById('createEventModal'));
-              modal.hide();
-              this.reset();
-            } else {
-              alert('Error creating event.');
-            }
-          });
-        });
       });
     </script>
 
-    <script>
-      document.getElementById('semesterForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        fetch('/administrators/semester/create/', {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-          },
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            alert('Semester created successfully!');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('createSemesterModal'));
-            modal.hide();
-            this.reset();
-            location.reload(); // Refresh dashboard
-          } else {
-            alert('Error: ' + data.message);
-          }
-        });
-      });
-    </script>
-
+    <!-- JS Script to update Avatar -->
     <script>
       document.getElementById('avatarInput').addEventListener('change', function () {
         const file = this.files[0];
@@ -563,7 +511,6 @@
         img.onerror = null;
         img.src = "{% static 'images/profile2.jpg' %}";
       }
-
     </script>
 
   </body>

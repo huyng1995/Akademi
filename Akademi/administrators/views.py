@@ -18,6 +18,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from user.models import AdminProfile
 from user.decorators import admin_required
+from django.db.models import Max
+from django.contrib import messages
 
 @csrf_exempt
 def create_event(request):
@@ -34,8 +36,13 @@ def create_event(request):
             description=description
         )
 
-        return JsonResponse({'status': 'success', 'id': event.id})
-    return JsonResponse({'status': 'error'}, status=400)
+        messages.success(request, "Event created successfully!")
+        # return JsonResponse({'status': 'success', 'id': event.id})
+        return redirect('admin_dashboard')
+    
+    messages.error(request, "Failed to create event!")
+    # return JsonResponse({'status': 'error'}, status=400)
+    return redirect('admin_dashboard')
 
 @csrf_exempt
 def create_semester(request):
@@ -45,16 +52,22 @@ def create_semester(request):
         start = request.POST.get('start_date')
         end = request.POST.get('end_date')
 
+        max_id = UserSemester.objects.aggregate(Max('semester_id'))['semester_id__max'] or 0
+        next_id = max_id + 1
+
         UserSemester.objects.create(
+            semester_id=next_id,
             term=term,
             academic_year=year,
             start_date=start,
             end_date=end
         )
 
-        return JsonResponse({'status': 'success'})
+        messages.success(request, "Semester created successfully!")
+        return redirect('admin_dashboard')  # adjust to your dashboard view name
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    messages.error(request, "Failed to create semester.")
+    return redirect('admin_dashboard')
 
 def get_calendar_events(request):
     start = request.GET.get('start')
