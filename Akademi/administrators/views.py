@@ -140,20 +140,12 @@ def admin_students_manage(request):
 def admin_students(request):
     return render(request, 'administrators/admin_students.html')
 
-# def admin_courses_create(request):
-#     return render(request, 'administrators/admin_courses_create.html')
-
-#def admin_professors_create(request):
-#    return render(request, 'administrators/admin_professors_create.html')
-
 def admin_students_create(request):
     return render(request, 'administrators/admin_students_create.html')
 
 def admin_courses(request):
     return render(request, 'administrators/admin_courses.html')
 
-
-# Create your views here.
 def index(request):
     return render(request, 'administrators/index.html')
 
@@ -229,11 +221,12 @@ def edit_professor(request, professor_id):
         form = ProfessorForm(instance=professor)
     return render(request, 'administrators/admin_professor_form.html', {'professor': professor, 'form': form})
 
-# Delete a professor
+# Soft delete a professor by deactivating
 def delete_professor(request, professor_id):
     professor = get_object_or_404(UserProfessor, professor_id=professor_id)
     if request.method == 'POST':
-        professor.delete()
+        professor.is_active = False
+        professor.save()
         return redirect('admin_professors_manage')
     return render(request, 'administrators/admin_professor_delete.html', {'professor': professor})
 
@@ -269,11 +262,12 @@ def edit_student(request, student_id):
         form = StudentForm(instance=student)
     return render(request, 'administrators/admin_student_form.html', {'student': student, 'form': form})
 
-# Delete a student
+# Soft delete a student by deactivating
 def delete_student(request, student_id):
     student = get_object_or_404(UserStudent, student_id=student_id)
     if request.method == 'POST':
-        student.delete()
+        student.is_active = False
+        student.save()
         return redirect('admin_students')
     return render(request, 'administrators/admin_confirm_student_delete.html', {'student': student})
 
