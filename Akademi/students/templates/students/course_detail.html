@@ -4,6 +4,19 @@
 <div class="container">
 <div class="page-inner">
 
+    {% if messages %}
+    <div style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 600px;">
+        <div id="message-container" class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between shadow" role="alert" style="padding-right: 3rem;">
+            <div>
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            <button type="button" class="btn-close ms-3" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
         <div>
             <h3 class="fw-bold mb-3">Courses</h3>
@@ -78,4 +91,16 @@
 
 </div>
 </div>
+
+<!-- JS to dismiss message -->
+<script>
+  // Auto-dismiss message after 5 seconds
+  setTimeout(() => {
+    const alert = document.getElementById('message-container');
+    if (alert) {
+      alert.classList.remove('show');
+      alert.classList.add('fade');
+    }
+  }, 5000);
+</script>
 {% endblock %}

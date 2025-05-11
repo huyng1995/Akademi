@@ -208,7 +208,6 @@ def enroll_course(request, course_id):
 
     # Add confirmation message
     messages.success(request, f"{course.course_name} has been successfully enrolled.")
-    
     return redirect('students_dashboard')
 
 @student_required
